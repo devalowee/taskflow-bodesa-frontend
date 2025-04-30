@@ -37,5 +37,4 @@ export interface RequestCardProps {
   };
   files?: string[];
   createdAt: string;
-  boardInitials?: string;
 }

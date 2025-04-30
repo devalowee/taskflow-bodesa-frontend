@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -18,183 +18,146 @@ import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
 import { getInitials, getPriority, resumeTo60Chars } from "@/app/lib/helpers";
 import { formatForTooltip } from "@/lib/formatDate";
+import { useSocketContext } from "@/context/SocketContext";
 
-export const SingleBoard = () => {
+export const SingleBoard: React.FC = () => {
+  const { socketEmit, socketOn, socketOff, connected } = useSocketContext();
+
   const [activeCard, setActiveCard] = useState<RequestCardProps | null>(null);
-
   const navigate = useNavigate();
-
-  const { slug } = useParams();
-
+  const { slug } = useParams<{ slug: string }>();
   const { getRequests, updateRequestStatus } = UseRequest();
 
-  const { data: requestsQuery } = useQuery({
+  // 1. Petición de datos (igual que antes)
+  const { data: requestsQuery = [] } = useQuery<RequestCardProps[]>({
     queryKey: ["requests", slug],
     queryFn: async () => {
-      const { requests, ok, message, redirect } = await getRequests(
-        slug as string
-      );
-
-      if (redirect) {
-        navigate("/dashboard/tableros");
-      }
-
-      if (!ok && message) {
+      const { requests, ok, message, redirect } = await getRequests(slug!);
+      if (redirect) navigate("/dashboard/tableros");
+      if (!ok) {
         toast.error(message);
         return [];
       }
 
-      return requests?.map((req) => {
-        req.description = resumeTo60Chars(req.description);
-        req.priority = getPriority(req.priority);
-        req.board.initials = getInitials(req.board.name);
-        req.createdAt = formatForTooltip(req.createdAt);
-        req.finishDate = formatForTooltip(req.finishDate);
-
-        return req;
-      });
+      return requests!.map(req => ({
+        ...req,
+        description: resumeTo60Chars(req.description),
+        priority: getPriority(req.priority),
+        board: {
+          ...req.board,
+          initials: getInitials(req.board.name),
+        },
+        createdAt: formatForTooltip(req.createdAt),
+        finishDate: formatForTooltip(req.finishDate),
+      }));
     },
   });
 
+  // 2. Mutación de estado (igual que antes)
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: async (request: RequestCardProps) => {
-      const { ok, message } = await updateRequestStatus(request);
-
-      if (!ok) {
-        throw new Error(
-          message || "Error al actualizar el estado de la solicitud"
-        );
-      }
-
-      return request;
-    },
-    onMutate: async (updatedRequest: RequestCardProps) => {
+    mutationFn: (request: RequestCardProps) => updateRequestStatus(request),
+    onMutate: async updatedRequest => {
       await queryClient.cancelQueries({ queryKey: ["requests", slug] });
-
-      const previousRequests = queryClient.getQueryData<RequestCardProps[]>([
-        "requests",
-        slug,
-      ]);
-
+      const prev = queryClient.getQueryData<RequestCardProps[]>(["requests", slug]);
       queryClient.setQueryData<RequestCardProps[]>(
         ["requests", slug],
-        (old) => {
-          return (
-            old?.map((req) =>
-              req.id === updatedRequest.id
-                ? {
-                    ...req,
-                    status: updatedRequest.status,
-                  }
-                : req
-            ) || []
-          );
-        }
+        old =>
+          old?.map(r =>
+            r.id === updatedRequest.id ? { ...r, status: updatedRequest.status } : r
+          ) || []
       );
-
-      return { previousRequests };
+      return { prev };
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["requests", slug] });
-    },
-    onError: (error, _req, context) => {
-      if (context?.previousRequests) {
-        queryClient.setQueryData<RequestCardProps[]>(
-          ["requests", slug],
-          context.previousRequests
-        );
+    onError: (err: Error, _vars, context) => {
+      if (context?.prev) {
+        queryClient.setQueryData(["requests", slug], context.prev);
       }
-
-      toast.error(
-        error.message || "Error al actualizar el estado de la solicitud"
-      );
+      toast.error(err.message || "Error al actualizar el estado");
     },
   });
 
-  const getRequestsByStatus = (status: RequestStatus) =>
-    requestsQuery?.filter((req) => req.status === status) || [];
+  // 3. Filtrar y memoizar por estatus
+  const awaiting   = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.AWAITING),   [requestsQuery]);
+  const attention  = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.ATTENTION),  [requestsQuery]);
+  const inProgress = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.IN_PROGRESS),[requestsQuery]);
+  const pending    = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.PENDING),    [requestsQuery]);
+  const done       = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.DONE),       [requestsQuery]);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  // 4. Handlers memoizados para drag
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const req = requestsQuery.find(r => r.id === event.active.id) || null;
+    setActiveCard(req);
+  }, [requestsQuery]);
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-
     if (!over) return;
+    const req = requestsQuery.find(r => r.id === active.id);
+    if (req && req.status !== over.id) {
+      updateRequestMutation({ ...req, status: over.id as RequestStatus });
+      socketEmit('update-request-status', { id: req.id, status: over.id, boardSlug: slug! });
+    }
+    setActiveCard(null);
 
-    const requestId = active.id;
-    const newStatus = over.id as RequestCardProps["status"];
+  }, [requestsQuery, updateRequestMutation, socketEmit, slug]);
 
-    updateRequestMutation({
-      ...(requestsQuery?.find(
-        (req) => req.id === requestId
-      ) as RequestCardProps),
-      status: newStatus,
+  useEffect(() => {
+    console.log(slug)
+    socketEmit('join-board', slug!);
+
+    socketOn<{id: string, status: string}>('request-status-updated', (data) => {
+      console.log(data)
+      updateRequestMutation({ id: data.id, status: data.status } as RequestCardProps);
     });
 
-    setActiveCard(null);
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    setActiveCard(requestsQuery?.find((req) => {
-      if (req.id === active.id) {
-          return {
-            title: req.title,
-            description: req.description,
-            author: req.author,
-            assignedTo: req.assignedTo,
-            priority: req.priority,
-            status: req.status,
-          };
-        }
-      }) || null
-    );
-  };
-
+    return () => {
+      console.log('me voy a desmontar')
+      socketOff('request-status-updated');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, connected]);
+  
   return (
     <div className="w-full h-full">
-      <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-        <div className="w-full h-full">
-          <div className="flex gap-4 min-w-min h-[inherit]">
-            <BoardColumn
-              title="EN ESPERA"
-              requests={getRequestsByStatus(RequestStatus.AWAITING)}
-              status={RequestStatus.AWAITING}
-              color="bg-gray-400"
-              allowButton={true}
-            />
-            <BoardColumn
-              title="REQUIERE ATENCIÓN"
-              requests={getRequestsByStatus(RequestStatus.ATTENTION)}
-              status={RequestStatus.ATTENTION}
-              color="bg-yellow-400"
-            />
-            <BoardColumn
-              title="EN PROGRESO"
-              requests={getRequestsByStatus(RequestStatus.IN_PROGRESS)}
-              status={RequestStatus.IN_PROGRESS}
-              color="bg-sky-500"
-            />
-            <BoardColumn
-              title="POR AUTORIZAR"
-              requests={getRequestsByStatus(RequestStatus.PENDING)}
-              status={RequestStatus.PENDING}
-              color="bg-purple-600"
-            />
-            <BoardColumn
-              title="TERMINADAS"
-              requests={getRequestsByStatus(RequestStatus.DONE)}
-              status={RequestStatus.DONE}
-              color="bg-green-500"
-            />
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="flex gap-4 h-full">
+          <BoardColumn
+            title="EN ESPERA"
+            requests={awaiting}
+            status={RequestStatus.AWAITING}
+            color="bg-gray-400"
+            allowButton
+          />
+          <BoardColumn
+            title="REQUIERE ATENCIÓN"
+            requests={attention}
+            status={RequestStatus.ATTENTION}
+            color="bg-yellow-400"
+          />
+          <BoardColumn
+            title="EN PROGRESO"
+            requests={inProgress}
+            status={RequestStatus.IN_PROGRESS}
+            color="bg-sky-500"
+          />
+          <BoardColumn
+            title="POR AUTORIZAR"
+            requests={pending}
+            status={RequestStatus.PENDING}
+            color="bg-purple-600"
+          />
+          <BoardColumn
+            title="TERMINADAS"
+            requests={done}
+            status={RequestStatus.DONE}
+            color="bg-green-500"
+          />
 
-            <DragOverlay dropAnimation={null}>
-              {activeCard ? (
-                <RequestCard
-                  {...activeCard}
-                  boardInitials={getInitials(slug as string)}
-                />
-              ) : null}
-            </DragOverlay>
-          </div>
+          <DragOverlay dropAnimation={null}>
+            {activeCard && (
+              <RequestCard {...activeCard} />
+            )}
+          </DragOverlay>
         </div>
       </DndContext>
     </div>

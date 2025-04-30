@@ -3,7 +3,6 @@ import { RequestCardProps, RequestStatus } from "./interfaces/board.interfaces";
 import { useDroppable } from "@dnd-kit/core";
 import { CreateRequest } from "./CreateRequest";
 import { useParams } from "react-router";
-import { getInitials } from "@/app/lib/helpers";
 import { cn } from "@/lib/utils";
 
 interface BoardColumnProps {
@@ -39,7 +38,7 @@ export const BoardColumn = ({ title, status, requests, color, allowButton = fals
       >
         <div className="flex flex-col gap-2 items-center">
           {requests.map((request) => (
-            <RequestBasicCard key={request.id} {...request} boardInitials={getInitials(slug as string)} />
+            <RequestBasicCard key={request.id} {...request}/>
           ))}
         </div>
       </div>
