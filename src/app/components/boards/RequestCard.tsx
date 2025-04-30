@@ -26,17 +26,18 @@ export const RequestCard = ({
   assignedTo,
   priority,
   board,
+  finishDate,
 }: RequestCardProps) => {
   return (
-    <div className="scale-105 rotate-1 cursor-grabbing">
-      <Card className="py-2 gap-2">
-        <CardHeader className="border-b !pb-[11px] px-4 flex items-center gap-2">
-          <p className="text-[9px] bg-green-700 text-white p-1 font-bold rounded">
+    <div className="scale-105 rotate-1 cursor-grabbing font-roboto-condensed">
+      <Card className="py-0 gap-0 border-2 border-transparent">
+        <CardHeader className="border-b !py-0 px-3 h-9.5 flex items-center gap-2">
+          <p className="text-[9px] bg-green-700 text-white p-1 px-1.5 font-bold rounded">
             {board.initials}
           </p>
           <img src={author.avatar} alt="avatar" className="size-5 rounded" />
-          <CalendarPlus className="size-5 bg-gray-100 p-1 rounded" />
-          <Monitor className="size-5 bg-gray-100 p-1 rounded" />
+          <CalendarPlus className="size-5 bg-[#F3F3F3] p-0.5 rounded" />
+          <Monitor className="size-5 bg-[#F3F3F3] p-0.5 rounded" />
           <span
             className={cn(
               "flex items-center gap-1 p-1 rounded ml-auto",
@@ -44,16 +45,16 @@ export const RequestCard = ({
             )}
           >
             <Circle className="size-2.5" />
-            <p className="text-[9px]">{priority}</p>
+            <p className="text-xs">{priority}</p>
           </span>
         </CardHeader>
-        <CardContent className="px-4 min-h-16">
+        <CardContent className="px-4 !py-0 min-h-18.5 flex items-center">
           <CardDescription className="text-slate-700">
             <p className="text-sm font-bold">{title}</p>
-            <p className="text-sm">{description}</p>
+            <p className="text-[13px]">{description}</p>
           </CardDescription>
         </CardContent>
-        <CardFooter className="px-4 !pt-2 border-t flex items-center gap-2">
+        <CardFooter className="px-3 !py-0 h-9.5 border-t flex items-center gap-1">
           {assignedTo ? (
             <img
               src={assignedTo?.avatar}
@@ -65,21 +66,21 @@ export const RequestCard = ({
               <UserRoundX className="size-3 text-white" />
             </span>
           )}
-          <span className="text-[10px] flex items-center gap-1 bg-gray-100 p-1 rounded">
-            <ListEnd className="size-2.5" />
-            10
+          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
+            <ListEnd className="size-3" />
+            <p className="text-[10px]">10</p>
           </span>
-          <span className="text-[10px] flex items-center gap-1 bg-gray-100 p-1 rounded">
-            <MessageSquare className="size-2.5" />
-            10
+          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
+            <MessageSquare className="size-3" />
+            <p className="text-[10px]">10</p>
           </span>
-          <span className="text-[10px] flex items-center gap-1 bg-gray-100 p-1 rounded">
-            <Repeat2 className="size-2.5" />
-            10
+          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
+            <Repeat2 className="size-3" />
+            <p className="text-[10px]">10</p>
           </span>
-          <span className="text-[10px] flex items-center gap-1 bg-gray-100 p-1 rounded w-full justify-center">
-            <Rocket className="size-2.5" />
-            20/04 1:00
+          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 w-full rounded text-green-600">
+            <Rocket className="size-3" />
+            <p className="text-[10px]">{finishDate}</p>
           </span>
         </CardFooter>
       </Card>

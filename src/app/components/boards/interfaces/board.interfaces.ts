@@ -24,7 +24,7 @@ export interface RequestCardProps {
     avatar: string;
   };
   priority: RequestPriority | string;
-  finishDate: Date;
+  finishDate: string;
   assignedTo?: {
     id: string;
     name: string;
@@ -36,6 +36,6 @@ export interface RequestCardProps {
     initials: string;
   };
   files?: string[];
-  createdAt?: string;
+  createdAt: string;
   boardInitials?: string;
 }

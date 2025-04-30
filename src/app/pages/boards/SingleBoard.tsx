@@ -17,6 +17,7 @@ import { useNavigate, useParams } from "react-router";
 import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
 import { getInitials, getPriority, resumeTo60Chars } from "@/app/lib/helpers";
+import { formatForTooltip } from "@/lib/formatDate";
 
 export const SingleBoard = () => {
   const [activeCard, setActiveCard] = useState<RequestCardProps | null>(null);
@@ -47,7 +48,9 @@ export const SingleBoard = () => {
         req.description = resumeTo60Chars(req.description);
         req.priority = getPriority(req.priority);
         req.board.initials = getInitials(req.board.name);
-        
+        req.createdAt = formatForTooltip(req.createdAt);
+        req.finishDate = formatForTooltip(req.finishDate);
+
         return req;
       });
     },
@@ -155,26 +158,32 @@ export const SingleBoard = () => {
               title="EN ESPERA"
               requests={getRequestsByStatus(RequestStatus.AWAITING)}
               status={RequestStatus.AWAITING}
+              color="bg-gray-400"
+              allowButton={true}
             />
             <BoardColumn
               title="REQUIERE ATENCIÓN"
               requests={getRequestsByStatus(RequestStatus.ATTENTION)}
               status={RequestStatus.ATTENTION}
+              color="bg-yellow-400"
             />
             <BoardColumn
               title="EN PROGRESO"
               requests={getRequestsByStatus(RequestStatus.IN_PROGRESS)}
               status={RequestStatus.IN_PROGRESS}
+              color="bg-sky-500"
             />
             <BoardColumn
               title="POR AUTORIZAR"
               requests={getRequestsByStatus(RequestStatus.PENDING)}
               status={RequestStatus.PENDING}
+              color="bg-purple-600"
             />
             <BoardColumn
               title="TERMINADAS"
               requests={getRequestsByStatus(RequestStatus.DONE)}
               status={RequestStatus.DONE}
+              color="bg-green-500"
             />
 
             <DragOverlay dropAnimation={null}>

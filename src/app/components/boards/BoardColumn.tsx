@@ -4,14 +4,17 @@ import { useDroppable } from "@dnd-kit/core";
 import { CreateRequest } from "./CreateRequest";
 import { useParams } from "react-router";
 import { getInitials } from "@/app/lib/helpers";
+import { cn } from "@/lib/utils";
 
 interface BoardColumnProps {
   title: string;
   requests: RequestCardProps[];
   status: RequestStatus;
+  color: string;
+  allowButton?: boolean;
 }
 
-export const BoardColumn = ({ title, status, requests }: BoardColumnProps) => {
+export const BoardColumn = ({ title, status, requests, color, allowButton = false }: BoardColumnProps) => {
   const { setNodeRef } = useDroppable({
     id: status,
   });
@@ -19,19 +22,22 @@ export const BoardColumn = ({ title, status, requests }: BoardColumnProps) => {
   const { slug } = useParams();
 
   return (
-    <div role="column" className="w-[285px] rounded h-[80vh] flex flex-col">
+    <div role="column" className="w-[285px] h-[80vh] bg-black/5 rounded-xl flex flex-col">
       <div
         role="columnheader"
-        className="p-2 h-[10%] flex justify-between items-center"
+        className="px-4 h-[10%] flex justify-between items-center"
       >
-        <h1 className="text-xs font-bold text-stone-500">{title}</h1>
-        <CreateRequest status={status} boardSlug={slug} />
+        <div className="flex items-center gap-2 h-full">
+          <div className={cn("w-1 h-4 rounded-full", color)}></div>
+          <h1 className="text-xs font-bold text-stone-500">{title}</h1>
+        </div>
+        {allowButton && <CreateRequest status={status} boardSlug={slug} />}
       </div>
       <div
         ref={setNodeRef}
-        className="max-h-[100%] min-h-[100%] overflow-y-auto bg-black/5 rounded-xl scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent"
+        className="h-[100%] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent"
       >
-        <div className="flex flex-col gap-2 p-3">
+        <div className="flex flex-col gap-2 items-center">
           {requests.map((request) => (
             <RequestBasicCard key={request.id} {...request} boardInitials={getInitials(slug as string)} />
           ))}

@@ -11,27 +11,27 @@ export const getInitials = (name: string | undefined) => {
 export const getPriority = (priority: string) => {
   switch (priority) {
     case 'LOW':
-      return 'BAJA';
+      return 'Baja';
     case 'NORMAL':
-      return 'NORMAL';
+      return 'Normal';
     case 'HIGH':
-      return 'ALTA';
+      return 'Alta';
     case 'URGENT':
-      return 'URGENTE';
+      return 'Urgente';
     default:
-      return 'BAJA';
+      return 'Baja';
   }
 }
 
 export const getPriorityColor = (priority: string) => {
   switch (priority) {
-    case 'BAJA':
+    case 'Baja':
       return 'bg-sky-200';
-    case 'NORMAL':
+    case 'Normal':
       return 'bg-violet-400';
-    case 'ALTA':
+    case 'Alta':
       return 'bg-amber-400';
-    case 'URGENTE':
+    case 'Urgente':
       return 'bg-red-400';
     default:
       return 'bg-gray-400';
@@ -40,7 +40,7 @@ export const getPriorityColor = (priority: string) => {
 
 export const resumeTo60Chars = (text: string) => {
   if (text.length > 60) {
-    return `${ text.slice(0, 60).trim() }..`;
+    return `${ text.slice(0, 60).trim() }...`;
   }
   return text;
 }
