@@ -26,6 +26,7 @@ import { CustomAlert } from '../CustomAlert';
 import { RequestPriority } from "./interfaces/board.interfaces";
 import { UseRequest } from "@/hooks/UseRequest";
 import { getPriority, sanitizedSlug } from "@/app/lib/helpers";
+import { useSocketContext } from "@/context/SocketContext";
 
 interface CreateRequestFormProps {
   children: React.ReactNode;
@@ -66,6 +67,8 @@ export const CreateRequestForm = ({
   onClose,
   boardSlug,
 }: CreateRequestFormProps) => {
+  const { socketEmit } = useSocketContext();
+  
   const { createRequest } = UseRequest();
 
   const [message, setMessage] = useState<string | null>(null);
@@ -77,7 +80,8 @@ export const CreateRequestForm = ({
         setMessage(data.message);
       } else {
         onClose();
-        queryClient.invalidateQueries({ queryKey: ["requests"] });
+        socketEmit("new-request", boardSlug);
+        queryClient.invalidateQueries({ queryKey: ["requests", boardSlug] });
       }
     },
     onError: (error) => {
@@ -179,6 +183,7 @@ export const CreateRequestForm = ({
   if (!boardSlug) {
     return <h1>No se pudo obtener el tablero</h1>;
   }
+
 
   return (
     <Form {...form}>

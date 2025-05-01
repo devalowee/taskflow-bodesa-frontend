@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface TooltipComponentProps {
   children: React.ReactNode;
-  text: string;
+  text: string | undefined;
 }
 
 export const TooltipComponent = ({ children, text }: TooltipComponentProps) => {
@@ -12,7 +12,7 @@ export const TooltipComponent = ({ children, text }: TooltipComponentProps) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>{children}</TooltipTrigger>
-      <TooltipContent>{text}</TooltipContent>
+      <TooltipContent>{text ? text : ''}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

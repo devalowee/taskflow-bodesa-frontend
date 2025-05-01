@@ -13,10 +13,18 @@ export enum RequestPriority {
   URGENT = 'URGENT',
 }
 
+export enum RequestType {
+  PRINTED = 'PRINTED',
+  DIGITAL = 'DIGITAL',
+  ECOMMERCE = 'ECOMMERCE',
+  SPECIAL = 'SPECIAL',
+}
+
 export interface RequestCardProps {
   id: string;
   title: string;
   description: string;
+  type: RequestType;
   status: RequestStatus;
   author: {
     id: string;

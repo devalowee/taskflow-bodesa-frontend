@@ -29,7 +29,7 @@ export const SingleBoard: React.FC = () => {
   const { getRequests, updateRequestStatus } = UseRequest();
 
   // 1. Petición de datos (igual que antes)
-  const { data: requestsQuery = [] } = useQuery<RequestCardProps[]>({
+  const { data: requestsQuery = [], isLoading } = useQuery<RequestCardProps[]>({
     queryKey: ["requests", slug],
     queryFn: async () => {
       const { requests, ok, message, redirect } = await getRequests(slug!);
@@ -102,7 +102,10 @@ export const SingleBoard: React.FC = () => {
   }, [requestsQuery, updateRequestMutation, socketEmit, slug]);
 
   useEffect(() => {
-    console.log(slug)
+    const handleInvalidate = () => {
+      queryClient.invalidateQueries({ queryKey: ["requests", slug] });
+    }
+    
     socketEmit('join-board', slug!);
 
     socketOn<{id: string, status: string}>('request-status-updated', (data) => {
@@ -110,9 +113,12 @@ export const SingleBoard: React.FC = () => {
       updateRequestMutation({ id: data.id, status: data.status } as RequestCardProps);
     });
 
+    socketOn('request-created', handleInvalidate);
+
     return () => {
       console.log('me voy a desmontar')
       socketOff('request-status-updated');
+      socketOff('request-created', handleInvalidate);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, connected]);
@@ -127,30 +133,35 @@ export const SingleBoard: React.FC = () => {
             status={RequestStatus.AWAITING}
             color="bg-gray-400"
             allowButton
+            isLoading={isLoading}
           />
           <BoardColumn
             title="REQUIERE ATENCIÓN"
             requests={attention}
             status={RequestStatus.ATTENTION}
             color="bg-yellow-400"
+            isLoading={isLoading}
           />
           <BoardColumn
             title="EN PROGRESO"
             requests={inProgress}
             status={RequestStatus.IN_PROGRESS}
             color="bg-sky-500"
+            isLoading={isLoading}
           />
           <BoardColumn
             title="POR AUTORIZAR"
             requests={pending}
             status={RequestStatus.PENDING}
             color="bg-purple-600"
+            isLoading={isLoading}
           />
           <BoardColumn
             title="TERMINADAS"
             requests={done}
             status={RequestStatus.DONE}
             color="bg-green-500"
+            isLoading={isLoading}
           />
 
           <DragOverlay dropAnimation={null}>

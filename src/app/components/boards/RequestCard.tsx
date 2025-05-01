@@ -30,7 +30,7 @@ export const RequestCard = ({
 }: RequestCardProps) => {
   return (
     <div className="scale-105 rotate-1 cursor-grabbing font-roboto-condensed">
-      <Card className="py-0 gap-0 border-2 border-transparent">
+      <Card className="py-0 gap-0 border-2 border-violet-400">
         <CardHeader className="border-b !py-0 px-3 h-9.5 flex items-center gap-2">
           <p className="text-[9px] bg-green-700 text-white p-1 px-1.5 font-bold rounded">
             {board.initials}

@@ -5,7 +5,7 @@ interface SocketContextType {
   socket: Socket | null;
   socketEmit: (event: string, data: unknown) => void;
   socketOn: <T = unknown> (event: string, callback: (data: T) => void) => void;
-  socketOff: (event: string) => void;
+  socketOff: (event: string, callback?: () => void) => void;
   connected: boolean;
 }
 
