@@ -58,7 +58,7 @@ export const RequestBasicCard = ({
       <Card className={`${transform ? 'border-dashed border-2' : 'border-2'} py-0 gap-0 ${CardColor}`}>
         <CardHeader className="border-b !pb-0 px-3 h-9.5 flex items-center gap-2">
           <TooltipComponent text={board.name}>
-            <p className="text-[9px] bg-green-700 text-white p-1 px-1.5 font-bold rounded">
+            <p className="text-[9px] text-white p-1 px-1.5 font-bold rounded" style={{ backgroundColor: board.color }}>
               {board.initials}
             </p>
           </TooltipComponent>
@@ -86,7 +86,7 @@ export const RequestBasicCard = ({
           </CardDescription>
         </CardContent>
         <CardFooter className="px-3 !py-0 h-9.5 border-t flex items-center gap-1">
-          <TooltipComponent text={assignedTo?.name}>
+          <TooltipComponent text={assignedTo?.name || 'Sin asignar'}>
             {assignedTo ? (
               <img
                 src={assignedTo?.avatar}

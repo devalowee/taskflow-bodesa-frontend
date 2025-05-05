@@ -16,7 +16,7 @@ import { UseRequest } from "@/hooks/UseRequest";
 import { useNavigate, useParams } from "react-router";
 import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
-import { getInitials, getPriority, resumeTo60Chars } from "@/app/lib/helpers";
+import { getPriority, resumeTo60Chars } from "@/app/lib/helpers";
 import { formatForTooltip } from "@/lib/formatDate";
 import { useSocketContext } from "@/context/SocketContext";
 
@@ -43,10 +43,6 @@ export const SingleBoard: React.FC = () => {
         ...req,
         description: resumeTo60Chars(req.description),
         priority: getPriority(req.priority),
-        board: {
-          ...req.board,
-          initials: getInitials(req.board.name),
-        },
         createdAt: formatForTooltip(req.createdAt),
         finishDate: formatForTooltip(req.finishDate),
       }));

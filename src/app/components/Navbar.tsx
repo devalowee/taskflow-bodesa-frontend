@@ -6,11 +6,6 @@ import { useSocketContext } from "@/context/SocketContext";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-// const getInitials = (name: string) => {
-//   const parts = name.split(' ');
-//   return (parts[0]?.[0] || '') + (parts[1]?.[0] || '').toUpperCase();
-// }
-
 export const Navbar = () => {
   const { socketEmit, socketOn, socketOff, connected } = useSocketContext();
   const { user } = UseAuth();

@@ -42,6 +42,7 @@ export interface RequestCardProps {
     id: string;
     name: string;
     initials: string;
+    color: string;
   };
   files?: string[];
   createdAt: string;

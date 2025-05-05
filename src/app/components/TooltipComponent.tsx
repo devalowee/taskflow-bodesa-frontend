@@ -11,7 +11,7 @@ export const TooltipComponent = ({ children, text }: TooltipComponentProps) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger className="flex">{children}</TooltipTrigger>
       <TooltipContent>{text ? text : ''}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
