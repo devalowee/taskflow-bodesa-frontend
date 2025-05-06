@@ -1,5 +1,5 @@
 import { UseAuth } from "@/hooks/UseAuth";
-import { Bell, Mail } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { getRole } from "../lib/getRole";
 import { Breadcums } from "./Breadcums";
 import { useSocketContext } from "@/context/SocketContext";
@@ -32,15 +32,15 @@ export const Navbar = () => {
   }, [connected]);
   
   return (
-    <header className="flex justify-between px-10 py-5 border-b border-border bg-white animate-fade-in-down">
+    <header className="flex justify-between px-10 border-b border-border bg-white animate-fade-in-down h-[60px]">
       <Breadcums />
-      <div className="flex items-center gap-10 border-l border-border pl-5">
-        <p>Hola, <span className="font-bold">{getRole(user.role)}</span></p>
-        <div className="flex items-center gap-4">
-            <img src={user.avatar} alt="avatar" className="size-7 rounded-full" />
-          <Mail className="text-violet-500" onClick={touchNotification}/>
-          <Bell className="text-violet-500" onClick={touchNotification}/>
+      <div className="flex items-center gap-5 pl-5">
+        <div className="flex items-center gap-4 border-r border-border pr-4">
+          <Search size={16} onClick={touchNotification}/>
+          <Bell size={16} onClick={touchNotification}/>
         </div>
+        <p className="text-sm font-medium">{getRole(user.role)}</p>
+        <img src={user.avatar} alt="avatar" className="size-7.5 rounded-full" />
       </div>
     </header>
   )

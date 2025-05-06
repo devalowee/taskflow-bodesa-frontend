@@ -15,6 +15,7 @@ import {
   RemoveUserFromBoardData,
   RemoveUserFromBoardResponse,
 } from "./interfaces/UseBoards.interface";
+import { Roles } from "@/app/lib/helpers";
 
 const getData = (data: GetUserBoardsData | GetBoardUsersData) => {
   if (!data.ok) {
@@ -66,7 +67,7 @@ export const UseBoards = () => {
     }
   };
 
-  const getUserBoards = async (role: string): Promise<GetUserBoardsData> => {
+  const getUserBoards = async (role: Roles): Promise<GetUserBoardsData> => {
     try {
       if (role === "ADMIN" || role === "SUPER_ADMIN") {
         const { data } = (await api.get(

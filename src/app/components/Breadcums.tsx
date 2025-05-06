@@ -1,6 +1,7 @@
 import { UseBreadcums } from '@/hooks/UseBreadcums';
 import { ChevronRight, Home } from 'lucide-react';
 import { Link } from 'react-router'
+import { Fragment } from 'react/jsx-runtime';
 
 export const Breadcums = () => {
   const { breadcums, breadcumPaths } = UseBreadcums();
@@ -8,23 +9,23 @@ export const Breadcums = () => {
     <nav role="heading" className="flex items-center gap-2">
       { breadcums.map((breadcumb, index) => (
         index === 0 ? (
-          <>
-            <Link key={breadcumb} to={`${breadcumPaths[index]}`} className="text-sm text-gray-800">
-              <Home className="size-6 text-gray-500" />
+          <Fragment key={breadcumb}>
+            <Link to={`${breadcumPaths[index]}`}>
+              <Home className="size-5 text-gray-500" />
             </Link>
             <ChevronRight className="size-4 text-gray-500" />
-          </>
+          </Fragment>
         ) : index === breadcums.length - 1 ? (
-          <Link key={breadcumb} to={`${breadcumPaths[index]}`} className="text-sm text-gray-800">
+          <Link key={breadcumb} to={`${breadcumPaths[index]}`} className="text-xs text-gray-800">
             {breadcumb}
           </Link>
         ) : (
-          <>
-            <Link key={breadcumb} to={`${breadcumPaths[index]}`} className="text-sm text-gray-500">
+          <Fragment key={breadcumb}>
+            <Link to={`${breadcumPaths[index]}`} className="text-xs text-gray-500">
               {breadcumb}
             </Link>
             <ChevronRight className="size-4 text-gray-500" />
-          </>
+          </Fragment>
         )
       ))}
     </nav>

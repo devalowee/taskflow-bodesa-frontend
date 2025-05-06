@@ -1,3 +1,4 @@
+import { Roles } from "@/app/lib/helpers";
 import { AxiosResponse } from "axios";
 
 export interface LoginResponse extends AxiosResponse{
@@ -7,12 +8,11 @@ export interface LoginResponse extends AxiosResponse{
   errors?: []
 }
 
-type Role = 'ADMIN' | 'ADMIN_DESIGN' | 'ADMIN_PUBLISHER' | 'DESIGNER' | 'PUBLISHER' | 'SUPER_ADMIN';
 
 export interface User {
   id: string
   name: string
-  role: Role
+  role: Roles
   avatar: string
 }
 

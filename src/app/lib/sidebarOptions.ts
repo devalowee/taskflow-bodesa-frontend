@@ -1,4 +1,5 @@
-import { Home, ListCheck, Settings, Table, Users } from "lucide-react";
+import { ClipboardList, Home, ListCheck, Rocket, Settings, Table, Users } from "lucide-react";
+import { Roles } from "./helpers";
 
 interface MenuItem {
   label: string;
@@ -21,6 +22,18 @@ export const menuItems: MenuItem[] = [
     allowedRoles: ['ALL'],
   },
   {
+    label: "Autoasignaciones",
+    icon: Rocket,
+    path: "/dashboard/autoasignaciones",
+    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
+  },
+  {
+    label: "Centro de asignaciones",
+    icon: ClipboardList,
+    path: "/dashboard/centro-de-asignaciones",
+    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
+  },
+  {
     label: "Solicitudes",
     icon: ListCheck,
     path: "/dashboard/solicitudes",
@@ -30,7 +43,7 @@ export const menuItems: MenuItem[] = [
     label: 'Usuarios',
     icon: Users,
     path: '/dashboard/usuarios',
-    allowedRoles: ['ADMIN', 'SUPER_ADMIN'],
+    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN],
   },
   {
     label: "Configuración",

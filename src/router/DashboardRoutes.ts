@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { AppLayout } from "@/app/layouts/AppLayout";
 import { Home } from "@/app/pages/Home";
 import { Boards } from "@/app/pages/Boards";
@@ -8,11 +8,14 @@ import { DashboardRedirect } from "@/components/DashboardRedirect";
 import { Users } from "@/app/pages/Users";
 import { BoardUsers } from "@/app/pages/boards/BoardUsers";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { SingleBoard } from '@/app/pages/boards/SingleBoard';
+import { SingleBoard } from "@/app/pages/boards/SingleBoard";
+import { Assignments } from "@/app/pages/Assignments";
+import { Roles } from "@/app/lib/helpers";
+import { AutoAssigments } from "@/app/pages/AutoAssigments";
 
 const createProtectedRoute = (allowedRoles: string[]) => {
   return () => React.createElement(ProtectedRoute, { allowedRoles });
-}
+};
 
 export const DashboardRoutes = [
   {
@@ -40,7 +43,11 @@ export const DashboardRoutes = [
           },
           {
             path: "usuarios",
-            Component: createProtectedRoute(['ADMIN', 'SUPER_ADMIN', 'ADMIN_DESIGN']),
+            Component: createProtectedRoute([
+              Roles.ADMIN,
+              Roles.SUPER_ADMIN,
+              Roles.ADMIN_DESIGN,
+            ]),
             children: [
               {
                 index: true,
@@ -55,8 +62,42 @@ export const DashboardRoutes = [
         Component: Requests,
       },
       {
+        path: "centro-de-asignaciones",
+        Component: createProtectedRoute([
+          Roles.ADMIN,
+          Roles.SUPER_ADMIN,
+          Roles.ADMIN_DESIGN,
+          Roles.ADMIN_PUBLISHER,
+        ]),
+        children: [
+          {
+            index: true,
+            Component: Assignments,
+          },
+        ],
+      },
+      {
+        path: "autoasignaciones",
+        Component: createProtectedRoute([
+          Roles.ADMIN,
+          Roles.SUPER_ADMIN,
+          Roles.ADMIN_DESIGN,
+          Roles.ADMIN_PUBLISHER,
+        ]),
+        children: [
+          {
+            index: true,
+            Component: AutoAssigments,
+          },
+        ],
+      },
+      {
         path: "usuarios",
-        Component: createProtectedRoute(['ADMIN', 'SUPER_ADMIN', 'ADMIN_DESIGN']),
+        Component: createProtectedRoute([
+          Roles.ADMIN,
+          Roles.SUPER_ADMIN,
+          Roles.ADMIN_DESIGN,
+        ]),
         children: [
           {
             index: true,
@@ -75,4 +116,3 @@ export const DashboardRoutes = [
     Component: DashboardRedirect,
   },
 ];
-

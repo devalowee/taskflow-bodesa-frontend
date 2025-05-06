@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -9,35 +9,30 @@ import {
   RequestCardProps,
   RequestStatus,
 } from "@/app/components/boards/interfaces/board.interfaces";
-import { BoardColumn } from "@/app/components/boards/BoardColumn";
 import { RequestCard } from "@/app/components/boards/RequestCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { UseRequest } from "@/hooks/UseRequest";
-import { useNavigate, useParams } from "react-router";
 import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
 import { getPriority, resumeTo60Chars } from "@/app/lib/helpers";
 import { formatForTooltip } from "@/lib/formatDate";
-import { useSocketContext } from "@/context/SocketContext";
+import { AssignmentColumn } from "../components/assignments/AssignmentColumn";
 
-export const SingleBoard: React.FC = () => {
-  const { socketEmit, socketOn, socketOff, connected } = useSocketContext();
-
+export const AutoAssigments: React.FC = () => {
   const [activeCard, setActiveCard] = useState<RequestCardProps | null>(null);
-  const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
-  const { getRequests, updateRequestStatus } = UseRequest();
+  const { getMyRequests, updateRequestStatus } = UseRequest();
 
   // 1. Petición de datos (igual que antes)
   const { data: requestsQuery = [], isLoading } = useQuery<RequestCardProps[]>({
-    queryKey: ["requests", slug],
+    queryKey: ["my-requests"],
     queryFn: async () => {
-      const { requests, ok, message, redirect } = await getRequests(slug!);
-      if (redirect) navigate("/dashboard/tableros");
+      const { requests, ok, message } = await getMyRequests();
       if (!ok) {
-        toast.error(message);
+        toast.error(message || "Error al obtener las solicitudes");
         return [];
       }
+
+      console.log(requests);
 
       return requests!.map(req => ({
         ...req,
@@ -53,10 +48,10 @@ export const SingleBoard: React.FC = () => {
   const { mutate: updateRequestMutation } = useMutation({
     mutationFn: (request: RequestCardProps) => updateRequestStatus(request),
     onMutate: async updatedRequest => {
-      await queryClient.cancelQueries({ queryKey: ["requests", slug] });
-      const prev = queryClient.getQueryData<RequestCardProps[]>(["requests", slug]);
+      await queryClient.cancelQueries({ queryKey: ["my-requests"] });
+      const prev = queryClient.getQueryData<RequestCardProps[]>(["my-requests"]);
       queryClient.setQueryData<RequestCardProps[]>(
-        ["requests", slug],
+        ["my-requests"],
         old =>
           old?.map(r =>
             r.id === updatedRequest.id ? { ...r, status: updatedRequest.status } : r
@@ -66,7 +61,7 @@ export const SingleBoard: React.FC = () => {
     },
     onError: (err: Error, _vars, context) => {
       if (context?.prev) {
-        queryClient.setQueryData(["requests", slug], context.prev);
+        queryClient.setQueryData(["my-requests"], context.prev);
       }
       toast.error(err.message || "Error al actualizar el estado");
     },
@@ -91,37 +86,16 @@ export const SingleBoard: React.FC = () => {
     const req = requestsQuery.find(r => r.id === active.id);
     if (req && req.status !== over.id) {
       updateRequestMutation({ ...req, status: over.id as RequestStatus });
-      socketEmit('update-request-status', { id: req.id, status: over.id, boardSlug: slug! });
     }
     setActiveCard(null);
 
-  }, [requestsQuery, updateRequestMutation, socketEmit, slug]);
-
-  useEffect(() => {
-    const handleInvalidate = () => {
-      queryClient.invalidateQueries({ queryKey: ["requests", slug] });
-    }
-    
-    socketEmit('join-board', slug!);
-
-    socketOn<{id: string, status: string}>('request-status-updated', (data) => {
-      updateRequestMutation({ id: data.id, status: data.status } as RequestCardProps);
-    });
-
-    socketOn('request-created', handleInvalidate);
-
-    return () => {
-      socketOff('request-status-updated');
-      socketOff('request-created', handleInvalidate);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug, connected]);
+  }, [requestsQuery, updateRequestMutation]);
   
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full">aaa
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-4 h-full">
-          <BoardColumn
+          <AssignmentColumn
             title="EN ESPERA"
             requests={awaiting}
             status={RequestStatus.AWAITING}
@@ -129,28 +103,28 @@ export const SingleBoard: React.FC = () => {
             allowButton
             isLoading={isLoading}
           />
-          <BoardColumn
+          <AssignmentColumn
             title="REQUIERE ATENCIÓN"
             requests={attention}
             status={RequestStatus.ATTENTION}
             color="bg-yellow-400"
             isLoading={isLoading}
           />
-          <BoardColumn
+          <AssignmentColumn
             title="EN PROGRESO"
             requests={inProgress}
             status={RequestStatus.IN_PROGRESS}
             color="bg-sky-500"
             isLoading={isLoading}
           />
-          <BoardColumn
+          <AssignmentColumn
             title="POR AUTORIZAR"
             requests={pending}
             status={RequestStatus.PENDING}
             color="bg-purple-600"
             isLoading={isLoading}
           />
-          <BoardColumn
+          <AssignmentColumn
             title="TERMINADAS"
             requests={done}
             status={RequestStatus.DONE}

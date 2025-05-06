@@ -44,3 +44,12 @@ export const resumeTo60Chars = (text: string) => {
   }
   return text;
 }
+
+export enum Roles {
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN_DESIGN = 'ADMIN_DESIGN',
+  ADMIN_PUBLISHER = 'ADMIN_PUBLISHER',
+  PUBLISHER = 'PUBLISHER',
+  DESIGNER = 'DESIGNER',
+}
