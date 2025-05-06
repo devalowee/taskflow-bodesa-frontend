@@ -80,3 +80,29 @@ export interface UserPayload {
   password: string
   boards?: string[]
 }
+
+// ! Get Designers
+export interface GetDesignersAxiosResponse extends AxiosResponse {
+  data: GetDesignersResponse
+}
+
+export interface Designer {
+  id: string
+  name: string
+  avatar: string
+}
+
+export interface GetDesignersResponse {
+  message?: string
+  ok: boolean
+  designers?: Designer[]
+}
+
+export interface GetDesignersAxiosError {
+  response: {
+    data: {
+      message: string
+      ok: boolean
+    }
+  }
+}

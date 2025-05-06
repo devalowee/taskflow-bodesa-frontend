@@ -2,6 +2,7 @@ import { UseBreadcums } from '@/hooks/UseBreadcums';
 import { ChevronRight, Home } from 'lucide-react';
 import { Link } from 'react-router'
 import { Fragment } from 'react/jsx-runtime';
+import { sanitizedSlug } from '../lib/helpers';
 
 export const Breadcums = () => {
   const { breadcums, breadcumPaths } = UseBreadcums();
@@ -17,12 +18,12 @@ export const Breadcums = () => {
           </Fragment>
         ) : index === breadcums.length - 1 ? (
           <Link key={breadcumb} to={`${breadcumPaths[index]}`} className="text-xs text-gray-800">
-            {breadcumb}
+            {sanitizedSlug(breadcumb)}
           </Link>
         ) : (
           <Fragment key={breadcumb}>
             <Link to={`${breadcumPaths[index]}`} className="text-xs text-gray-500">
-              {breadcumb}
+              {sanitizedSlug(breadcumb)}
             </Link>
             <ChevronRight className="size-4 text-gray-500" />
           </Fragment>

@@ -1,6 +1,7 @@
 import { api } from "@/api/api";
 import { AxiosRequestError, AxiosResponse, RequestResponse } from "./interfaces/UseRequest.Interfaces";
 import { RequestCardProps } from "@/app/components/boards/interfaces/board.interfaces";
+import { TaskProps } from "@/app/components/requests/Task";
 
 export const UseRequest = () => {
   const createRequest = async (request: FormData, isAuto?: boolean): Promise<RequestResponse> => {
@@ -31,7 +32,20 @@ export const UseRequest = () => {
 
   const getRequests = async (slug: string): Promise<{requests?: RequestCardProps[], ok: boolean, message?: string, redirect?: boolean}> => {
     try {
-      const { data } = await api.get(`/requests/${slug}`);
+      const { data } = await api.get(`/requests/by-board/${slug}`);
+      return data;
+    } catch (error) {
+      console.error(error);
+      const { response } = error as AxiosRequestError;
+      return {
+        ...response.data
+      }
+    }
+  }
+
+  const getRequest = async (id: string): Promise<{request?: TaskProps, ok: boolean, message?: string }> => {
+    try {
+      const { data } = await api.get(`/requests/single/${id}`);
       return data;
     } catch (error) {
       console.error(error);
@@ -82,6 +96,7 @@ export const UseRequest = () => {
   return {
     createRequest,
     getRequests,
+    getRequest,
     getMyRequests,
     updateRequestStatus
   }

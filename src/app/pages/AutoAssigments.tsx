@@ -92,7 +92,7 @@ export const AutoAssigments: React.FC = () => {
   }, [requestsQuery, updateRequestMutation]);
   
   return (
-    <div className="w-full h-full">aaa
+    <div className="w-full h-full">
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-4 h-full">
           <AssignmentColumn

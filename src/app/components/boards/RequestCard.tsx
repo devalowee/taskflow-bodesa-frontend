@@ -14,6 +14,7 @@ import {
   Monitor,
   Repeat2,
   Rocket,
+  SquareArrowOutUpRight,
   UserRoundX,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,7 +33,7 @@ export const RequestCard = ({
     <div className="scale-105 rotate-1 cursor-grabbing font-roboto-condensed">
       <Card className="py-0 gap-0 border-2 border-violet-400">
         <CardHeader className="border-b !py-0 px-3 h-9.5 flex items-center gap-2">
-          <p className="text-[9px] bg-green-700 text-white p-1 px-1.5 font-bold rounded">
+          <p className="text-[9px] text-white p-1 px-1.5 font-bold rounded" style={{ backgroundColor: board.color }}>
             {board.initials}
           </p>
           <img src={author.avatar} alt="avatar" className="size-5 rounded" />
@@ -47,6 +48,7 @@ export const RequestCard = ({
             <Circle className="size-2.5" />
             <p className="text-xs">{priority}</p>
           </span>
+          <SquareArrowOutUpRight className="size-5 bg-[#F3F3F3] p-0.5 rounded" />
         </CardHeader>
         <CardContent className="px-4 !py-0 min-h-18.5 flex items-center">
           <CardDescription className="text-slate-700">

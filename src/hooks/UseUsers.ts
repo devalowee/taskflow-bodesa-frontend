@@ -6,13 +6,16 @@ import {
   DeleteUserAxiosError,
   DeleteUserAxiosResponse,
   DeleteUserResponse,
+  GetDesignersAxiosError,
+  GetDesignersAxiosResponse,
+  GetDesignersResponse,
   GetUsersAxiosError,
   GetUsersAxiosResponse,
   GetUsersResponse,
   UserPayload,
 } from "./interfaces/UseUsers.interface";
 
-const getData = (data: GetUsersResponse | CreateUserResponse) => {
+const getData = (data: GetUsersResponse | CreateUserResponse | GetDesignersResponse) => {
   if (!data.ok) {
     console.error(data.message);
     return {
@@ -22,7 +25,7 @@ const getData = (data: GetUsersResponse | CreateUserResponse) => {
   return data;
 };
 
-const getError = (error: GetUsersAxiosError | CreateUserAxiosError) => {
+const getError = (error: GetUsersAxiosError | CreateUserAxiosError | GetDesignersAxiosError) => {
   const { response } = error as GetUsersAxiosError | CreateUserAxiosError;
   console.error(error);
   return {
@@ -69,9 +72,19 @@ export const UseUsers = () => {
     }
   };
 
+  const getDesigners = async (): Promise<GetDesignersResponse> => {
+    try {
+      const { data } = (await api.get("/users/designers")) as GetDesignersAxiosResponse;
+      return getData(data);
+    } catch (error) {
+      return getError(error as GetDesignersAxiosError);
+    }
+  };
+
   return {
     getUsers,
     createUser,
     deleteUser,
+    getDesigners,
   };
 };

@@ -1,3 +1,5 @@
+import { RequestPriority, RequestStatus } from "../components/boards/interfaces/board.interfaces";
+
 export const sanitizedSlug = (slug: string) => {
   return slug.replace(/-/g, ' ').charAt(0).toUpperCase() + slug.replace(/-/g, ' ').slice(1);
 };
@@ -8,7 +10,7 @@ export const getInitials = (name: string | undefined) => {
   return (parts[0]?.[0] || '') + (parts[1]?.[0] || '').toUpperCase();
 }
 
-export const getPriority = (priority: string) => {
+export const getPriority = (priority: RequestPriority) => {
   switch (priority) {
     case 'LOW':
       return 'Baja';
@@ -53,3 +55,28 @@ export enum Roles {
   PUBLISHER = 'PUBLISHER',
   DESIGNER = 'DESIGNER',
 }
+
+export const getStatus = (status: RequestStatus) => {
+  switch (status) {
+    case 'AWAITING':
+      return 'Pendiente';
+    case 'ATTENTION':
+      return 'En progreso';
+    case 'IN_PROGRESS':
+      return 'En progreso';
+    case 'PENDING':
+      return 'Pendiente';
+    case 'DONE':
+      return 'Completada';
+    default:
+      return 'Pendiente';
+  }
+}
+
+export const getDisponibility = (disponibility: string) => {
+  switch (disponibility) {
+    case 'AVAILABLE':
+      return 'Disponible';
+  }
+}
+

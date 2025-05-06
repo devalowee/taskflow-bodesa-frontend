@@ -12,6 +12,7 @@ import { SingleBoard } from "@/app/pages/boards/SingleBoard";
 import { Assignments } from "@/app/pages/Assignments";
 import { Roles } from "@/app/lib/helpers";
 import { AutoAssigments } from "@/app/pages/AutoAssigments";
+import { SingleRequest } from "@/app/pages/requests/SingleRequest";
 
 const createProtectedRoute = (allowedRoles: string[]) => {
   return () => React.createElement(ProtectedRoute, { allowedRoles });
@@ -59,7 +60,16 @@ export const DashboardRoutes = [
       },
       {
         path: "solicitudes",
-        Component: Requests,
+        children: [
+          {
+            index: true,
+            Component: Requests,
+          },
+          {
+            path: ":id",
+            Component: SingleRequest,
+          },
+        ],
       },
       {
         path: "centro-de-asignaciones",

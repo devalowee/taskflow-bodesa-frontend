@@ -29,7 +29,7 @@ export const AssignmentColumn = ({ title, status, requests, color, allowButton =
       >
         <div className="flex items-center gap-2 h-full">
           <div className={cn("w-1 h-4 rounded-full", color)}></div>
-          <h1 className="text-xs font-bold text-stone-500">{title}</h1>
+          <h1 className="text-sm font-bold text-stone-500">{title}</h1>
         </div>
         {allowButton && <CreateRequest status={status} />}
       </div>
