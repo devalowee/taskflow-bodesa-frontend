@@ -33,7 +33,7 @@ export const SingleBoard: React.FC = () => {
     queryKey: ["requests", slug],
     queryFn: async () => {
       const { requests, ok, message, redirect } = await getRequests(slug || '');
-      if (redirect) navigate("/dashboard/tableros");
+      if (redirect) navigate("/tableros");
       if (!ok) {
         toast.error(message);
         return [];
@@ -45,7 +45,7 @@ export const SingleBoard: React.FC = () => {
 
   // 2. Mutación de estado (igual que antes)
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: async (request: { id: string, status: RequestStatus }) => {
+    mutationFn: async (request: { id: string, status: RequestStatus, isAutoAssigned: boolean }) => {
       const { ok, message } = await updateRequestStatus(request);
 
       if (!ok) {
@@ -60,10 +60,17 @@ export const SingleBoard: React.FC = () => {
 
       const prev = queryClient.getQueryData<RequestCardProps[]>(["requests", slug]);
 
+      
       queryClient.setQueryData(["requests", slug], (old: RequestCardProps[] = []) => {
         return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
       });
-
+      
+      if (request.isAutoAssigned) {
+        queryClient.setQueryData(["my-requests"], (old: RequestCardProps[] = []) => {
+          return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
+        });
+      }
+      
       return { prev };
     },
   });
@@ -86,7 +93,12 @@ export const SingleBoard: React.FC = () => {
     if (!over) return;
     const req = requestsQuery?.find(r => r.id === active.id);
     if (req && req.status !== over.id) {
-      updateRequestMutation({ ...req, status: over.id as RequestStatus });
+      updateRequestMutation({
+        id: req.id,
+        status: over.id as RequestStatus, 
+        isAutoAssigned: req.isAutoAssigned
+      });
+
       socketEmit('update-request-status', { id: req.id, status: over.id, boardSlug: slug! });
     }
     setActiveCard(null);

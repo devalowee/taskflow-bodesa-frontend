@@ -5,7 +5,7 @@ export const AuthLayout = () => {
   const { isAuthenticated } = UseAuth();
 
   if (isAuthenticated === 'authenticated') {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/" />;
   }
 
   return (

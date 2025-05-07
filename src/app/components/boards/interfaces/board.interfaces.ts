@@ -26,13 +26,16 @@ export interface RequestCardProps {
   description: string;
   type: RequestType;
   status: RequestStatus;
+  priority: RequestPriority;
+  finishDate: string;
+  files?: string[];
+  isAutoAssigned: boolean;
+  createdAt: string;
   author: {
     id: string;
     name: string;
     avatar: string;
   };
-  priority: RequestPriority;
-  finishDate: string;
   assignedTo?: {
     id: string;
     name: string;
@@ -44,6 +47,4 @@ export interface RequestCardProps {
     initials: string;
     color: string;
   };
-  files?: string[];
-  createdAt: string;
 }

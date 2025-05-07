@@ -81,7 +81,7 @@ export const RequestBasicCard = ({
             <PriorityIcon priority={priority} />
             <p className="text-xs">{priority}</p>
           </span>
-          <NavLink to={`/dashboard/solicitudes/${id}`} onPointerDown={(e) => e.stopPropagation()}>
+          <NavLink to={`/solicitudes/${id}`} onPointerDown={(e) => e.stopPropagation()}>
             <SquareArrowOutUpRight className="size-5 bg-[#F3F3F3] p-0.5 rounded" />
           </NavLink>
         </CardHeader>

@@ -43,7 +43,7 @@ export const BoardUsersTable = ({ searchParams, setSearchParams }: BroadUsersTab
       const { ok, users, total, board, message: messageResponse } = await getBoardUsers(slug, page);
 
       if (!board) {
-        navigate("/dashboard/tableros");
+        navigate("/tableros");
         toast.error("Ha ocurrido un error", {
           description: `No se ha podido cargar el tablero con el slug: ${slug}. Por favor, vuelve a intentarlo y asegúrate de que el tablero existe.`,
         });
@@ -65,7 +65,7 @@ export const BoardUsersTable = ({ searchParams, setSearchParams }: BroadUsersTab
 
   useEffect(() => {
     if (!slug) {
-      navigate("/dashboard/tableros");
+      navigate("/tableros");
     }
   });
 

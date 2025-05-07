@@ -13,7 +13,7 @@ export const ProtectedRoute = ({
   const hasPermission = user && allowedRoles.includes(user.role);
 
   if (!hasPermission) {
-    return <Navigate to='/dashboard/inicio' />;
+    return <Navigate to='/' />;
   } else {
     return <Outlet />
   }

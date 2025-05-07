@@ -37,7 +37,7 @@ export const AutoAssigments: React.FC = () => {
   });
 
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: async (request: { id: string, status: RequestStatus }) => {
+    mutationFn: async (request: { id: string, status: RequestStatus, board: string }) => {
       const { ok, message } = await updateRequestStatus(request);
 
       if (!ok) {
@@ -55,6 +55,16 @@ export const AutoAssigments: React.FC = () => {
       queryClient.setQueryData(['my-requests'], (old: RequestCardProps[] = []) => {
         return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
       });
+
+      const queryExists = queryClient.getQueryData(['requests', request.board]);
+
+      console.log(queryExists, request.board.slug);
+      
+      if (queryExists) {
+        queryClient.setQueryData(['requests', request.board.slug], (old: RequestCardProps[] = []) => {
+          return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
+        });
+      }
 
       return { prev };
     }
@@ -83,7 +93,11 @@ export const AutoAssigments: React.FC = () => {
     });
 
     if (req && req.status !== over.id) {
-      updateRequestMutation({ ...req, status: over.id as RequestStatus });
+      updateRequestMutation({
+        id: req.id,
+        status: over.id as RequestStatus,
+        board: req.board.slug
+      });
     }
 
     setActiveCard(null);

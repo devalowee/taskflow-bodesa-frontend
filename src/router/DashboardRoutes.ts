@@ -20,15 +20,11 @@ const createProtectedRoute = (allowedRoles: string[]) => {
 
 export const DashboardRoutes = [
   {
-    path: "/dashboard",
+    path: "/",
     Component: AppLayout,
     children: [
       {
         index: true,
-        Component: DashboardRedirect,
-      },
-      {
-        path: "inicio",
         Component: Home,
       },
       {
