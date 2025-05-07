@@ -16,79 +16,75 @@ import { UseRequest } from "@/hooks/UseRequest";
 import { useNavigate, useParams } from "react-router";
 import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
-import { getPriority, resumeTo60Chars } from "@/app/lib/helpers";
-import { formatForTooltip } from "@/lib/formatDate";
 import { useSocketContext } from "@/context/SocketContext";
-
+import { useSanitizeRequests } from "@/hooks/useSanitizeRequests";
+import { SanitizedRequestCardProps } from "@/app/components/assignments/AssignmentColumn";
 export const SingleBoard: React.FC = () => {
+  const { sanitizeRequests, sanitizeRequest } = useSanitizeRequests();
   const { socketEmit, socketOn, socketOff, connected } = useSocketContext();
 
-  const [activeCard, setActiveCard] = useState<RequestCardProps | null>(null);
+  const [activeCard, setActiveCard] = useState<SanitizedRequestCardProps | null>(null);
   const navigate = useNavigate();
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams();
   const { getRequests, updateRequestStatus } = UseRequest();
 
   // 1. Petición de datos (igual que antes)
-  const { data: requestsQuery = [], isLoading } = useQuery<RequestCardProps[]>({
+  const { data: requestsQuery, isLoading } = useQuery({
     queryKey: ["requests", slug],
     queryFn: async () => {
-      const { requests, ok, message, redirect } = await getRequests(slug!);
+      const { requests, ok, message, redirect } = await getRequests(slug || '');
       if (redirect) navigate("/dashboard/tableros");
       if (!ok) {
         toast.error(message);
         return [];
       }
 
-      return requests!.map(req => ({
-        ...req,
-        description: resumeTo60Chars(req.description),
-        priority: getPriority(req.priority),
-        createdAt: formatForTooltip(req.createdAt),
-        finishDate: formatForTooltip(req.finishDate),
-      }));
+      return requests;
     },
   });
 
   // 2. Mutación de estado (igual que antes)
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: (request: RequestCardProps) => updateRequestStatus(request),
-    onMutate: async updatedRequest => {
-      await queryClient.cancelQueries({ queryKey: ["requests", slug] });
-      const prev = queryClient.getQueryData<RequestCardProps[]>(["requests", slug]);
-      queryClient.setQueryData<RequestCardProps[]>(
-        ["requests", slug],
-        old =>
-          old?.map(r =>
-            r.id === updatedRequest.id ? { ...r, status: updatedRequest.status } : r
-          ) || []
-      );
-      return { prev };
-    },
-    onError: (err: Error, _vars, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(["requests", slug], context.prev);
+    mutationFn: async (request: { id: string, status: RequestStatus }) => {
+      const { ok, message } = await updateRequestStatus(request);
+
+      if (!ok) {
+        toast.error(message || "Error al actualizar el estado");
+        return ok;
       }
-      toast.error(err.message || "Error al actualizar el estado");
+
+      return ok;
+    },
+    onMutate: async (request) => {
+      await queryClient.cancelQueries({ queryKey: ["requests", slug] });
+
+      const prev = queryClient.getQueryData<RequestCardProps[]>(["requests", slug]);
+
+      queryClient.setQueryData(["requests", slug], (old: RequestCardProps[] = []) => {
+        return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
+      });
+
+      return { prev };
     },
   });
 
   // 3. Filtrar y memoizar por estatus
-  const awaiting   = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.AWAITING),   [requestsQuery]);
-  const attention  = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.ATTENTION),  [requestsQuery]);
-  const inProgress = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.IN_PROGRESS),[requestsQuery]);
-  const pending    = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.PENDING),    [requestsQuery]);
-  const done       = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.DONE),       [requestsQuery]);
+  const awaiting   = useMemo(() => sanitizeRequests(requestsQuery, RequestStatus.AWAITING),   [requestsQuery, sanitizeRequests]);
+  const attention  = useMemo(() => sanitizeRequests(requestsQuery, RequestStatus.ATTENTION),  [requestsQuery, sanitizeRequests]);
+  const inProgress = useMemo(() => sanitizeRequests(requestsQuery, RequestStatus.IN_PROGRESS),[requestsQuery, sanitizeRequests]);
+  const pending    = useMemo(() => sanitizeRequests(requestsQuery, RequestStatus.PENDING),    [requestsQuery, sanitizeRequests]);
+  const done       = useMemo(() => sanitizeRequests(requestsQuery, RequestStatus.DONE),       [requestsQuery, sanitizeRequests]);
 
   // 4. Handlers memoizados para drag
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    const req = requestsQuery.find(r => r.id === event.active.id) || null;
-    setActiveCard(req);
-  }, [requestsQuery]);
+    const req = requestsQuery?.find(req => req.id === event.active.id) || null;
+    setActiveCard(req ? sanitizeRequest(req) : null);
+  }, [requestsQuery, sanitizeRequest]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-    const req = requestsQuery.find(r => r.id === active.id);
+    const req = requestsQuery?.find(r => r.id === active.id);
     if (req && req.status !== over.id) {
       updateRequestMutation({ ...req, status: over.id as RequestStatus });
       socketEmit('update-request-status', { id: req.id, status: over.id, boardSlug: slug! });

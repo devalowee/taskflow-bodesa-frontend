@@ -1,4 +1,4 @@
-import { RequestPriority } from "@/app/components/boards/interfaces/board.interfaces";
+import { RequestCardProps, RequestPriority } from "@/app/components/boards/interfaces/board.interfaces";
 
 export const priorities = {
   'LOW': 'Baja',
@@ -29,3 +29,11 @@ export interface AxiosRequestError {
     data: RequestResponse;
   };
 }
+
+// ? My Requests
+export interface MyRequestsResponse {
+  requests?: RequestCardProps[];
+  ok: boolean;
+  message?: string;
+}
+

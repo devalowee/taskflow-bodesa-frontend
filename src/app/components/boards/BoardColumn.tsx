@@ -1,14 +1,14 @@
 import { RequestBasicCard } from "./RequestBasicCard";
-import { RequestCardProps, RequestStatus } from "./interfaces/board.interfaces";
+import { RequestStatus } from "./interfaces/board.interfaces";
 import { useDroppable } from "@dnd-kit/core";
 import { CreateRequest } from "./CreateRequest";
 import { useParams } from "react-router";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { SanitizedRequestCardProps } from "@/app/components/assignments/AssignmentColumn";
 interface BoardColumnProps {
   title: string;
-  requests: RequestCardProps[];
+  requests: SanitizedRequestCardProps[];
   status: RequestStatus;
   color: string;
   allowButton?: boolean;
