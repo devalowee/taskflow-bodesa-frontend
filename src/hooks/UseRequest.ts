@@ -69,10 +69,10 @@ export const UseRequest = () => {
     }
   }
 
-  const updateRequestStatus = async (request: RequestCardProps): Promise<RequestResponse> => {
+  const updateRequestStatus = async (id: string, status: string): Promise<RequestResponse> => {
     try {
-      const { data } = await api.patch(`/requests/${request.id}`, {
-        status: request.status
+      const { data } = await api.patch(`/requests/${id}`, {
+        status
       }) as AxiosResponse;
 
       if (!data.ok) {

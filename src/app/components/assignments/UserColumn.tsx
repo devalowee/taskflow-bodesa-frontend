@@ -1,7 +1,13 @@
 import { FolderInput, Rocket } from "lucide-react";
 import { Designer as UserColumnProps } from "@/hooks/interfaces/UseUsers.interface";
+import { useDroppable } from "@dnd-kit/core";
 
 export const UserColumn = ({ id, name, avatar }: UserColumnProps) => {
+  const { setNodeRef } = useDroppable({
+    id: id,
+  });
+
+
   return (
     <div className="flex gap-4 h-full">
       <div
@@ -25,7 +31,7 @@ export const UserColumn = ({ id, name, avatar }: UserColumnProps) => {
             <span className="text-xs">Diseñando</span>
             <span className="text-xs">En Revisión</span>
           </div>
-          <div className="flex flex-col gap-2 w-2/5">
+          <div className="flex flex-col gap-2 w-2/5" ref={setNodeRef}>
             <div className="border border-dashed size-full rounded-md border-black bg-neutral-300 flex flex-col items-center justify-center">
               <Rocket size={26} strokeWidth={1} />
               <p>Asignar</p>

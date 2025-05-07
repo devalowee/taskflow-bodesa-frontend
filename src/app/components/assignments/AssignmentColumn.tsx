@@ -1,13 +1,40 @@
 import { RequestBasicCard } from "@/app/components/boards/RequestBasicCard";
-import { RequestCardProps, RequestStatus } from "@/app/components/boards/interfaces/board.interfaces";
+import { RequestStatus, RequestType } from "@/app/components/boards/interfaces/board.interfaces";
 import { useDroppable } from "@dnd-kit/core";
 import { CreateRequest } from "./CreateRequest";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export interface SanitizedRequestCardProps {
+  id: string;
+  title: string;
+  description: string;
+  type: RequestType;
+  status: string;
+  author: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  priority: string;
+  finishDate: string;
+  assignedTo?: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  board: {
+    id: string;
+    name: string;
+    initials: string;
+    color: string;
+  };
+  createdAt: string;
+}
+
 interface AssignmentColumnProps {
   title: string;
-  requests: RequestCardProps[];
+  requests: SanitizedRequestCardProps[];
   status: RequestStatus;
   color: string;
   allowButton?: boolean;

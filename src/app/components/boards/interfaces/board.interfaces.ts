@@ -31,7 +31,7 @@ export interface RequestCardProps {
     name: string;
     avatar: string;
   };
-  priority: RequestPriority | string;
+  priority: RequestPriority;
   finishDate: string;
   assignedTo?: {
     id: string;

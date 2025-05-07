@@ -5,7 +5,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { RequestCardProps } from "./interfaces/board.interfaces";
 import {
   CalendarPlus,
   Circle,
@@ -19,7 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getPriorityColor } from "@/app/lib/helpers";
-
+import { SanitizedRequestCardProps } from "../assignments/AssignmentColumn";
 export const RequestCard = ({
   title,
   description,
@@ -28,7 +27,7 @@ export const RequestCard = ({
   priority,
   board,
   finishDate,
-}: RequestCardProps) => {
+}: SanitizedRequestCardProps) => {
   return (
     <div className="scale-105 rotate-1 cursor-grabbing font-roboto-condensed">
       <Card className="py-0 gap-0 border-2 border-violet-400">

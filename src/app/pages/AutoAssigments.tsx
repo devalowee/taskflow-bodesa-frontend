@@ -16,23 +16,21 @@ import queryClient from "@/lib/queryClient";
 import { toast } from "sonner";
 import { getPriority, resumeTo60Chars } from "@/app/lib/helpers";
 import { formatForTooltip } from "@/lib/formatDate";
-import { AssignmentColumn } from "../components/assignments/AssignmentColumn";
+import { AssignmentColumn, SanitizedRequestCardProps } from "../components/assignments/AssignmentColumn";
 
 export const AutoAssigments: React.FC = () => {
-  const [activeCard, setActiveCard] = useState<RequestCardProps | null>(null);
+  const [activeCard, setActiveCard] = useState<SanitizedRequestCardProps | null>(null);
   const { getMyRequests, updateRequestStatus } = UseRequest();
 
   // 1. Petición de datos (igual que antes)
-  const { data: requestsQuery = [], isLoading } = useQuery<RequestCardProps[]>({
+  const { data: requestsQuery, isLoading } = useQuery({
     queryKey: ["my-requests"],
     queryFn: async () => {
       const { requests, ok, message } = await getMyRequests();
       if (!ok) {
         toast.error(message || "Error al obtener las solicitudes");
-        return [];
+        return requests || [];
       }
-
-      console.log(requests);
 
       return requests!.map(req => ({
         ...req,
@@ -46,11 +44,11 @@ export const AutoAssigments: React.FC = () => {
 
   // 2. Mutación de estado (igual que antes)
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: (request: RequestCardProps) => updateRequestStatus(request),
-    onMutate: async updatedRequest => {
+    mutationFn: (id: string, status: string) => updateRequestStatus(id, status),
+    onMutate: async (updatedRequest: RequestCardProps) => {
       await queryClient.cancelQueries({ queryKey: ["my-requests"] });
-      const prev = queryClient.getQueryData<RequestCardProps[]>(["my-requests"]);
-      queryClient.setQueryData<RequestCardProps[]>(
+      const prev = queryClient.getQueryData<SanitizedRequestCardProps[]>(["my-requests"]);
+      queryClient.setQueryData<SanitizedRequestCardProps[]>(
         ["my-requests"],
         old =>
           old?.map(r =>
@@ -68,27 +66,30 @@ export const AutoAssigments: React.FC = () => {
   });
 
   // 3. Filtrar y memoizar por estatus
-  const awaiting   = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.AWAITING),   [requestsQuery]);
-  const attention  = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.ATTENTION),  [requestsQuery]);
-  const inProgress = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.IN_PROGRESS),[requestsQuery]);
-  const pending    = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.PENDING),    [requestsQuery]);
-  const done       = useMemo(() => requestsQuery.filter(r => r.status === RequestStatus.DONE),       [requestsQuery]);
+  const awaiting   = useMemo(() => requestsQuery?.filter(r => r.status === RequestStatus.AWAITING) || [],   [requestsQuery]);
+  const attention  = useMemo(() => requestsQuery?.filter(r => r.status === RequestStatus.ATTENTION) || [],  [requestsQuery]);
+  const inProgress = useMemo(() => requestsQuery?.filter(r => r.status === RequestStatus.IN_PROGRESS) || [],[requestsQuery]);
+  const pending    = useMemo(() => requestsQuery?.filter(r => r.status === RequestStatus.PENDING) || [],    [requestsQuery]);
+  const done       = useMemo(() => requestsQuery?.filter(r => r.status === RequestStatus.DONE) || [],       [requestsQuery]);
 
   // 4. Handlers memoizados para drag
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    const req = requestsQuery.find(r => r.id === event.active.id) || null;
-    setActiveCard(req);
+    const req = requestsQuery?.find(r => r.id === event.active.id) || null;
+    setActiveCard(req as SanitizedRequestCardProps);
   }, [requestsQuery]);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over) return;
-    const req = requestsQuery.find(r => r.id === active.id);
-    if (req && req.status !== over.id) {
-      updateRequestMutation({ ...req, status: over.id as RequestStatus });
-    }
-    setActiveCard(null);
 
+    if (!over) return;
+
+    const req = requestsQuery?.find(r => r.id === active.id);
+
+    if (req && req.status !== over.id) {
+      updateRequestMutation({ ...req, status: over.id as string });
+    }
+
+    setActiveCard(null);
   }, [requestsQuery, updateRequestMutation]);
   
   return (

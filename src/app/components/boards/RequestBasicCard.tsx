@@ -6,7 +6,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { useDraggable } from "@dnd-kit/core";
-import { RequestCardProps, RequestStatus } from "./interfaces/board.interfaces";
+import { RequestStatus } from "./interfaces/board.interfaces";
 import {
   CalendarPlus,
   ListEnd,
@@ -22,6 +22,7 @@ import { PriorityIcon } from "./PriorityIcon";
 import { TooltipComponent } from "../TooltipComponent";
 import { TypeIcon } from "./TypeIcon";
 import { NavLink } from "react-router";
+import { SanitizedRequestCardProps } from "../assignments/AssignmentColumn";
 
 export const RequestBasicCard = ({
   id,
@@ -35,7 +36,7 @@ export const RequestBasicCard = ({
   board,
   createdAt,
   finishDate,
-}: RequestCardProps) => {
+}: SanitizedRequestCardProps) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   
   const CardColor = cn(

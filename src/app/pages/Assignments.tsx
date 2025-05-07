@@ -8,7 +8,7 @@ import { toast } from "sonner"
 export const Assignments = () => {
   const { getDesigners } = UseUsers()
 
-  const { data: designers, isLoading } = useQuery({
+  const { data: designers } = useQuery({
     queryKey: ["designers"],
     queryFn: async () => {
       const { designers, ok, message } = await getDesigners();
