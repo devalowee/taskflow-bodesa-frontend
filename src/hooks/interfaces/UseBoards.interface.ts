@@ -15,6 +15,8 @@ export interface GetBoardAxiosError {
 export interface Board {
   id: string
   name: string
+  initials: string
+  color: string
   slug: string
   createdAt: string
 }

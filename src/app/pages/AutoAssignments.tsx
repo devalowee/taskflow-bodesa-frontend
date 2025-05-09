@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { AssignmentColumn, SanitizedRequestCardProps } from "../components/assignments/AssignmentColumn";
 import { useSanitizeRequests } from "@/hooks/useSanitizeRequests";
 
-export const AutoAssigments: React.FC = () => {
+export const AutoAssignments: React.FC = () => {
   const [activeCard, setActiveCard] = useState<SanitizedRequestCardProps | null>(null);
   const { getMyRequests, updateRequestStatus } = UseRequest();
   const { sanitizeRequests } = useSanitizeRequests();
@@ -37,7 +37,7 @@ export const AutoAssigments: React.FC = () => {
   });
 
   const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: async (request: { id: string, status: RequestStatus, board: string }) => {
+    mutationFn: async (request: { id: string, status: RequestStatus, boardSlug: string }) => {
       const { ok, message } = await updateRequestStatus(request);
 
       if (!ok) {
@@ -56,12 +56,12 @@ export const AutoAssigments: React.FC = () => {
         return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
       });
 
-      const queryExists = queryClient.getQueryData(['requests', request.board]);
+      const queryExists = queryClient.getQueryData(['requests', request.boardSlug]);
 
-      console.log(queryExists, request.board.slug);
+      console.log(queryExists, request.boardSlug);
       
       if (queryExists) {
-        queryClient.setQueryData(['requests', request.board.slug], (old: RequestCardProps[] = []) => {
+        queryClient.setQueryData(['requests', request.boardSlug], (old: RequestCardProps[] = []) => {
           return old.map(req => req.id === request.id ? { ...req, status: request.status } : req)
         });
       }
@@ -96,7 +96,7 @@ export const AutoAssigments: React.FC = () => {
       updateRequestMutation({
         id: req.id,
         status: over.id as RequestStatus,
-        board: req.board.slug
+        boardSlug: req.board.slug
       });
     }
 

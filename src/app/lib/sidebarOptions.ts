@@ -1,7 +1,13 @@
-import { ClipboardList, Home, ListCheck, Rocket, Settings, Table, Users } from "lucide-react";
+import { BookDashed, ClipboardList, Home, ListCheck, Rocket, Settings, Table, Users } from "lucide-react";
 import { Roles } from "./helpers";
 
 interface MenuItem {
+  menuTitle: string;
+  slug: string;
+  menuChildren: MenuChildren[];
+}
+
+interface MenuChildren {
   label: string;
   icon: React.ElementType;
   path: string;
@@ -10,52 +16,76 @@ interface MenuItem {
 
 export const menuItems: MenuItem[] = [
   {
-    label: "Inicio",
-    icon: Home,
-    path: "/",
-    allowedRoles: ['ALL'],
+    menuTitle: "Centro de control",
+    slug: "centro-de-control",
+    menuChildren: [
+      {
+        label: "Inicio",
+        icon: Home,
+        path: "/",
+        allowedRoles: ['ALL'],
+      },
+      {
+        label: "Autoasignaciones",
+        icon: Rocket,
+        path: "/autoasignaciones",
+        allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
+      },
+      {
+        label: "Centro de asignaciones",
+        icon: ClipboardList,
+        path: "/centro-de-asignaciones",
+        allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
+      },
+      {
+        label: "Solicitudes",
+        icon: ListCheck,
+        path: "/solicitudes",
+        allowedRoles: ['ALL'],
+      },
+    ],
   },
   {
-    label: "Tableros",
-    icon: Table,
-    path: "/tableros",
-    allowedRoles: ['ALL'],
+    menuTitle: "Tableros",
+    slug: "tableros",
+    menuChildren: [
+      {
+        label: "Tableros",
+        icon: Table,
+        path: "/tableros",
+        allowedRoles: ['ALL'],
+      },
+    ],
   },
   {
-    label: "Autoasignaciones",
-    icon: Rocket,
-    path: "/autoasignaciones",
-    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
-  },
-  {
-    label: "Centro de asignaciones",
-    icon: ClipboardList,
-    path: "/centro-de-asignaciones",
-    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
-  },
-  {
-    label: "Solicitudes",
-    icon: ListCheck,
-    path: "/solicitudes",
-    allowedRoles: ['ALL'],
-  },
-  {
-    label: 'Usuarios',
-    icon: Users,
-    path: '/usuarios',
-    allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN],
-  },
-  {
-    label: "Configuración",
-    icon: Settings,
-    path: "/configuracion",
-    allowedRoles: ['ALL'],
+    menuTitle: "Configuración",
+    slug: "configuracion",
+    menuChildren: [
+      {
+        label: "Formatos",
+        icon: BookDashed,
+        path: "/formatos",
+        allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
+      },
+      {
+        label: 'Usuarios',
+        icon: Users,
+        path: '/usuarios',
+        allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN],
+      },
+      {
+        label: "Configuración",
+        icon: Settings,
+        path: "/configuracion",
+        allowedRoles: ['ALL'],
+      },
+    ],
   },
 ];
 
 export const getMenuItems = (role: string) => {
   return menuItems.filter((item) => {
-    if (item.allowedRoles.includes('ALL')) return true;
-    return item.allowedRoles.includes(role);
+    if (item.menuChildren.some((child) => child.allowedRoles.includes('ALL'))) return true;
+    return item.menuChildren.some((child) => child.allowedRoles.includes(role));
   });
 };

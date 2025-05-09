@@ -10,7 +10,7 @@ import {
 import { UsersTableSkeleton } from "../users/UsersTableSkeleton";
 import { Button } from "@/components/ui/button";
 import { getRole } from "@/app/lib/getRole";
-import { UsersTablePagination } from "../UsersTablePagination";
+import { TablePagination } from "../TablePagination";
 import { UseBoards } from "@/hooks/UseBoards";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -108,7 +108,7 @@ export const BoardUsersTable = ({ searchParams, setSearchParams }: BroadUsersTab
           )}
         </TableBody>
       </Table>
-      <UsersTablePagination page={page} total={total} setPage={handlePageChange} />
+      <TablePagination page={page} total={total} setPage={handlePageChange} />
     </div>
   );
 };

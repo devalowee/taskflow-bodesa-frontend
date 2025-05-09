@@ -2,7 +2,7 @@ import { Pagination, PaginationEllipsis, PaginationItem, PaginationLink, Paginat
 import { PaginationContent } from "@/components/ui/pagination"
 import { useEffect, useState } from "react";
 
-export const UsersTablePagination = ({ page, total, setPage }: { page: number, total: number, setPage: (page: number) => void }) => {
+export const TablePagination = ({ page, total, setPage }: { page: number, total: number, setPage: (page: number) => void }) => {
   const [currentPage, setCurrentPage] = useState(page);
   const totalPages = total;
 

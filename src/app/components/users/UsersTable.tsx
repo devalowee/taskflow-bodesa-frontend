@@ -14,7 +14,7 @@ import { getRole } from "@/app/lib/getRole";
 import { CircleCheck, CircleX, Eye, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UsersTableSkeleton } from "./UsersTableSkeleton";
-import { UsersTablePagination } from "../UsersTablePagination";
+import { TablePagination } from "../TablePagination";
 import { DeleteUser } from "./DeleteUser";
 import { formatDDMMYYYY } from "@/lib/formatDate";
 
@@ -85,7 +85,7 @@ export const UsersTable = () => {
           )}
         </TableBody>
       </Table>
-      <UsersTablePagination page={page} total={total} setPage={setPage} />
+      <TablePagination page={page} total={total} setPage={setPage} />
     </div>
   );
 };

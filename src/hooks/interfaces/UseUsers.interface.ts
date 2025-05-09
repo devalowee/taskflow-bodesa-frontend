@@ -90,6 +90,12 @@ export interface Designer {
   id: string
   name: string
   avatar: string
+  requests: {
+    pending: number
+    attention: number
+    inProgress: number
+    total: number
+  }
 }
 
 export interface GetDesignersResponse {

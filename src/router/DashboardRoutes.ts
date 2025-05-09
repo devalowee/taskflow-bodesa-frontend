@@ -11,8 +11,10 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SingleBoard } from "@/app/pages/boards/SingleBoard";
 import { Assignments } from "@/app/pages/Assignments";
 import { Roles } from "@/app/lib/helpers";
-import { AutoAssigments } from "@/app/pages/AutoAssigments";
+import { AutoAssignments } from "@/app/pages/AutoAssignments";
 import { SingleRequest } from "@/app/pages/requests/SingleRequest";
+import { Formats } from "@/app/pages/Formats";
+import { Categories } from "@/app/pages/formats/Categories";
 
 const createProtectedRoute = (allowedRoles: string[]) => {
   return () => React.createElement(ProtectedRoute, { allowedRoles });
@@ -93,7 +95,7 @@ export const DashboardRoutes = [
         children: [
           {
             index: true,
-            Component: AutoAssigments,
+            Component: AutoAssignments,
           },
         ],
       },
@@ -109,6 +111,25 @@ export const DashboardRoutes = [
             index: true,
             Component: Users,
           },
+        ],
+      },
+      {
+        path: "formatos", 
+        Component: createProtectedRoute([
+          Roles.ADMIN,
+          Roles.SUPER_ADMIN,
+          Roles.ADMIN_DESIGN,
+          Roles.ADMIN_PUBLISHER,
+        ]),
+        children: [
+          {
+            index: true,
+            Component: Formats,
+          },
+          {
+            path: ':formatSlug/categorias',
+            Component: Categories,
+          }
         ],
       },
       {

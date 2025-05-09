@@ -44,6 +44,7 @@ export interface RequestCardProps {
   board: {
     id: string;
     name: string;
+    slug: string;
     initials: string;
     color: string;
   };

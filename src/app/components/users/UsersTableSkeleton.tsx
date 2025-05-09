@@ -2,31 +2,20 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { TableCell } from '@/components/ui/table'
 import { TableRow } from '@/components/ui/table'
 
-export const UsersTableSkeleton = ({cells = 5}: {cells: number}) => {
+export const UsersTableSkeleton = ({cells = 5, columns = 6}: {cells?: number, columns?: number}) => {
   return (
     <>
       {Array(cells)
         .fill(0)
         .map((_, index) => (
           <TableRow key={`skeleton-${index}`}>
-            <TableCell>
-              <Skeleton className="h-4 w-[80px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[150px]" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="h-4 w-[100px]" />
-            </TableCell>
-            <TableCell className="text-right">
-              <Skeleton className="h-4 w-[120px] ml-auto" />
-            </TableCell>
-            <TableCell className="text-right">
-              <Skeleton className="h-4 w-[120px] ml-auto" />
-            </TableCell>
-            <TableCell className="text-right">
-              <Skeleton className="h-4 w-[120px] ml-auto" />
-            </TableCell>
+            {Array(columns)
+              .fill(0)
+              .map((_, index) => (
+                <TableCell key={`skeleton-${index}`}>
+                  <Skeleton className="h-4 w-[80px]" />
+                </TableCell>
+              ))}
           </TableRow>
         ))}
     </>
