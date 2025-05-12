@@ -2,7 +2,7 @@ import React from "react";
 import { AppLayout } from "@/app/layouts/AppLayout";
 import { Home } from "@/app/pages/Home";
 import { Boards } from "@/app/pages/Boards";
-import { Requests } from "@/app/pages/Requests";
+import { Tasks } from "@/app/pages/Tasks";
 import { Settings } from "@/app/pages/Settings";
 import { DashboardRedirect } from "@/components/DashboardRedirect";
 import { Users } from "@/app/pages/Users";
@@ -15,6 +15,7 @@ import { AutoAssignments } from "@/app/pages/AutoAssignments";
 import { SingleRequest } from "@/app/pages/requests/SingleRequest";
 import { Formats } from "@/app/pages/Formats";
 import { Categories } from "@/app/pages/formats/Categories";
+import { CreateTask } from "@/app/pages/tasks/CreateTask";
 
 const createProtectedRoute = (allowedRoles: string[]) => {
   return () => React.createElement(ProtectedRoute, { allowedRoles });
@@ -57,11 +58,15 @@ export const DashboardRoutes = [
         ],
       },
       {
-        path: "solicitudes",
+        path: "tareas",
         children: [
           {
             index: true,
-            Component: Requests,
+            Component: Tasks,
+          },
+          {
+            path: "crear",
+            Component: CreateTask,
           },
           {
             path: ":id",

@@ -1,7 +1,7 @@
 import { api } from "@/api/api";
 import { AxiosRequestError, AxiosResponse, MyRequestsResponse, RequestResponse } from "./interfaces/UseRequest.Interfaces";
 import { RequestCardProps, RequestStatus } from "@/app/components/boards/interfaces/board.interfaces";
-import { TaskProps } from "@/app/components/requests/Task";
+import { TaskProps } from "@/app/components/tasks/Task";
 
 export const UseRequest = () => {
   const createRequest = async (request: FormData, isAuto?: boolean): Promise<RequestResponse> => {

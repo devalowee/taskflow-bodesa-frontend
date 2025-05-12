@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { UseRequest } from '@/hooks/UseRequest';
 import { toast } from 'sonner';
-import { Task } from '@/app/components/requests/Task';
-import { TaskChat } from '@/app/components/requests/TaskChat';
+import { Task } from '@/app/components/tasks/Task';
+import { TaskChat } from '@/app/components/tasks/TaskChat';
 
 export const SingleRequest = () => {
   const { getRequest } = UseRequest();

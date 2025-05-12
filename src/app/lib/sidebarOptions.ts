@@ -38,9 +38,9 @@ export const menuItems: MenuItem[] = [
         allowedRoles: [Roles.ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN_DESIGN, Roles.ADMIN_PUBLISHER],
       },
       {
-        label: "Solicitudes",
+        label: "Tareas",
         icon: ListCheck,
-        path: "/solicitudes",
+        path: "/tareas",
         allowedRoles: ['ALL'],
       },
     ],
