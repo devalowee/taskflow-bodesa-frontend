@@ -69,9 +69,10 @@ export const FormatsTable = () => {
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead>Nombre</TableHead>
+            <TableHead>Descripción</TableHead>
             <TableHead>Slug</TableHead>
+            <TableHead>Categoría</TableHead>
             <TableHead>Fecha de creación</TableHead>
-            <TableHead>Fecha de actualización</TableHead>
             <TableHead className="text-center">Acciones</TableHead>
           </TableRow>
         </TableHeader>
@@ -81,9 +82,10 @@ export const FormatsTable = () => {
               <TableRow key={format.slug}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{format.name}</TableCell>
+                <TableCell>{format.description}</TableCell>
                 <TableCell>{format.slug}</TableCell>
+                <TableCell>{format.belongsTo.name}</TableCell>
                 <TableCell>{formatDDMMYYYY(format.createdAt)}</TableCell>
-                <TableCell>{formatDDMMYYYY(format.updatedAt)}</TableCell>
                 <TableCell className="text-center space-x-2">
                   <Button variant="outline" size="icon">
                     <Pencil className="w-4 h-4" />

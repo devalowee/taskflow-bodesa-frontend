@@ -13,6 +13,7 @@ import { CustomAlert } from "../CustomAlert";
 import { useState } from "react";
 import { useParams } from "react-router";
 import { SelectFormatsCategories } from "./SelectFormatsCategories";
+import { Textarea } from "@/components/ui/textarea";
 
 interface CreateFormatFormProps {
   children: React.ReactNode;
@@ -24,6 +25,11 @@ const createFormatSchema = z.object({
     message: "El nombre es obligatorio",
   }).max(100, {
     message: "El nombre debe tener menos de 100 caracteres",
+  }),
+  description: z.string().min(1, {
+    message: "La descripción es obligatoria",
+  }).max(500, {
+    message: "La descripción debe tener menos de 500 caracteres",
   }),
   belongsTo: z.string().min(1, {
     message: "La categoría es obligatoria",
@@ -48,6 +54,7 @@ export const CreateFormatForm = ({ children, onClose }: CreateFormatFormProps) =
     resolver: zodResolver(createFormatSchema),
     defaultValues: {
       name: '',
+      description: '',
       slug: '',
       belongsTo: ''
     },
@@ -86,7 +93,7 @@ export const CreateFormatForm = ({ children, onClose }: CreateFormatFormProps) =
   
   return (
     <Form {...form}>
-      <form className="space-y-4" onSubmit={onSubmit}>
+      <form className="space-y-4 max-h-[60dvh] overflow-y-auto" onSubmit={onSubmit}>
         <FormField
           control={form.control}
           name="name"
@@ -102,6 +109,18 @@ export const CreateFormatForm = ({ children, onClose }: CreateFormatFormProps) =
         />
         <FormField
           control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Descripción</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Descripción del formato" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
           name="belongsTo"
           render={({ field }) => (
             <FormItem>
