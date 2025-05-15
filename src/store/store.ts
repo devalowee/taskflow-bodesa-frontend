@@ -9,6 +9,10 @@ export const store = configureStore({
     session: sessionSlice.reducer,
     task: taskSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

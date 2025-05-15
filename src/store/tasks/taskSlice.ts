@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-enum TaskPriority {
+export enum TaskPriority {
   LOW = 'LOW',
   NORMAL = 'NORMAL',
   HIGH = 'HIGH',
   URGENT = 'URGENT',
 }
 
-enum TaskType {
+export enum TaskType {
   DIGITAL = 'DIGITAL',
   PRINTED = 'PRINTED',
   ECOMMERCE = 'ECOMMERCE',
@@ -24,30 +24,32 @@ export enum TaskStep {
 
 interface TaskState {
   data: {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-    board: string;
-    type: TaskType;
-    finishDate: Date;
-    legals: string;
-    referenceFiles: string[];
-    files: string[];
+    type?: TaskType;
+    title?: string;
+    finishDate?: string;
+    priority?: TaskPriority;
+    description?: string;
+    referenceFiles?: File[];
+    size?: string;
+    legals?: string;
+    files?: File[];
+    board?: string;
   };
   currentStep: TaskStep;
 }
 
 const initialState: TaskState = {
   data: {
-    title: '',
-    description: '',
-    priority: TaskPriority.NORMAL,
-    board: '',
     type: TaskType.DIGITAL,
-    finishDate: new Date(),
-    legals: '',
+    title: '',
+    finishDate: new Date().toISOString(),
+    priority: TaskPriority.NORMAL,
+    description: '',
     referenceFiles: [],
+    legals: '',
+    size: '',
     files: [],
+    board: '',
   },
   currentStep: TaskStep.STEP_ONE,
 };
@@ -56,10 +58,10 @@ export const taskSlice = createSlice({
   name: "task",
   initialState,
   reducers: {
-    onSetDataTask: (state, { payload }: { payload: TaskState }) => {
+    onSetDataTask: (state, { payload }: { payload: TaskState['data'] }) => {
       const prevTask = state;
-      state = {
-        ...prevTask,
+      state.data = {
+        ...prevTask.data,
         ...payload,
       }
     },

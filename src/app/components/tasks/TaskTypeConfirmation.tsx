@@ -1,32 +1,31 @@
-import { Step } from "@/app/pages/tasks/CreateTask";
 import { Button } from "@/components/ui/button";
 import { useTaskSlice } from "@/hooks/useTaskSlice";
-import { TaskStep } from "@/store/tasks/taskSlice";
+import { TaskStep, TaskType } from "@/store/tasks/taskSlice";
 import { Check, MonitorSmartphone, Printer, Sparkles, Store } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const tasks = [
   {
-    type: "Digital",
-    slug: "digital",
+    name: "Digital",
+    type: TaskType.DIGITAL,
     description: "Redes Sociales y CRM",
     icon: <MonitorSmartphone size={80} strokeWidth={1.75} />,
   },
   {
-    type: "Impresa",
-    slug: "impresa",
+    name: "Impresa",
+    type: TaskType.PRINTED,
     description: "Espectaculares, pendones, etc.",
     icon: <Printer size={80} strokeWidth={1.75} />,
   },
   {
-    type: "Ecommerce",
-    slug: "ecommerce",
+    name: "Ecommerce",
+    type: TaskType.ECOMMERCE,
     description: "Tienda online, catálogos, etc.",
     icon: <Store size={80} strokeWidth={1.75} />,
   },
   {
-    type: "Especial",
-    slug: "especial",
+    name: "Especial",
+    type: TaskType.SPECIAL,
     description: "Material Distinto",
     icon: <Sparkles size={80} strokeWidth={1.75} />,
   },
@@ -74,12 +73,10 @@ const TaskCard = ({
 
 interface CreateTaksStepOneProps {
   currentStep: number;
-  steps: Step[];
-  setStep: (step: Step) => void;
 }
 
-export const CreateTaksStepOne = ({ steps, setStep, currentStep }: CreateTaksStepOneProps) => {
-  const { setCurrentStep } = useTaskSlice();
+export const TaskTypeConfirmation = ({ currentStep }: CreateTaksStepOneProps) => {
+  const { setCurrentStep, setDataTask } = useTaskSlice();
   const [selectedTask, setSelectedTask] = useState<string>('');
 
   const selected = useMemo(() => {
@@ -87,8 +84,10 @@ export const CreateTaksStepOne = ({ steps, setStep, currentStep }: CreateTaksSte
   }, [selectedTask]);
 
   const handleStep = (step: TaskStep) => {
-    setStep(steps[step]);
     setCurrentStep(step);
+    setDataTask({
+      type: selectedTask as TaskType,
+    });
   }
 
   return (
@@ -97,10 +96,10 @@ export const CreateTaksStepOne = ({ steps, setStep, currentStep }: CreateTaksSte
         {tasks.map((task) => (
           <TaskCard
             key={task.type}
-            title={task.type}
+            title={task.name}
             description={task.description}
             icon={task.icon}
-            slug={task.slug}
+            slug={task.type}
             selected={selectedTask}
             setSelected={setSelectedTask}
           />
@@ -109,7 +108,7 @@ export const CreateTaksStepOne = ({ steps, setStep, currentStep }: CreateTaksSte
       <Button 
         onClick={() => handleStep(currentStep + 1)}
         size="lg"
-        className="mt-6 bg-violet-700 hover:bg-violet-600 text-xl font-bold py-7 w-5/14"
+        className="mt-auto bg-violet-700 hover:bg-violet-600 text-xl font-bold py-7 w-67.5"
         disabled={!selected}
       >
         {currentStep === 1 ? "Comenzar" : "Siguiente"}

@@ -80,3 +80,34 @@ export const getDisponibility = (disponibility: string) => {
   }
 }
 
+export const allowedFileTypes = [
+  '.jpg',
+  '.png',
+  '.pdf',
+  '.jpeg',
+  '.gif',
+  '.webp',
+  '.heic',
+  '.mp3',
+  '.mp4',
+  '.mov',
+  '.avi',
+  '.webp',
+  '.zip',
+  '.wav',
+  '.doc',
+  '.docx',
+  '.xls',
+  '.xlsx',
+  '.ppt',
+  '.pptx',
+  '.txt',
+  '.pdf',
+  '.csv',
+];
+
+export const fileSize = 50 * 1024 * 1024; // 50MB
+
+export const getFileExtension = (fileName: string) => {
+  return '.' + fileName.split('.').pop()?.toLowerCase();
+}

@@ -25,41 +25,13 @@ import queryClient from "@/lib/queryClient";
 import { CustomAlert } from '../CustomAlert';
 import { RequestPriority } from "./interfaces/board.interfaces";
 import { UseRequest } from "@/hooks/UseRequest";
-import { getPriority, sanitizedSlug } from "@/app/lib/helpers";
+import { getFileExtension, fileSize, getPriority, sanitizedSlug, allowedFileTypes } from "@/app/lib/helpers";
 import { useSocketContext } from "@/context/SocketContext";
 
 interface CreateRequestFormProps {
   children: React.ReactNode;
   onClose: () => void;
   boardSlug: string | undefined;
-}
-
-const allowedTypes = [
-  '.jpg',
-  '.png',
-  '.pdf',
-  '.jpeg',
-  '.gif',
-  '.webp',
-  '.heic',
-  '.heif',
-  '.mp3',
-  '.mp4',
-  '.mov',
-  '.avi',
-  '.wmv',
-  '.mkv',
-  '.flv',
-  '.webm',
-  '.zip',
-  '.wav',
-  '.jfif'
-];
-
-const fileSize = 50 * 1024 * 1024; // 50MB
-
-const getFileExtension = (fileName: string) => {
-  return '.' + fileName.split('.').pop()?.toLowerCase();
 }
 
 export const CreateRequestForm = ({
@@ -136,10 +108,10 @@ export const CreateRequestForm = ({
     .refine((files) => {
       if (!files) return true;
       return Array.from(files).every((file) => {
-        return allowedTypes.includes(getFileExtension(file.name) || "");
+        return allowedFileTypes.includes(getFileExtension(file.name) || "");
       });
     }, {
-      message: `Debe subir archivos de tipo ${allowedTypes.join(", ")}`,
+      message: `Debe subir archivos de tipo ${allowedFileTypes.join(", ")}`,
     }),
   });
 
