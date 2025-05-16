@@ -8,9 +8,12 @@ import { FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { AlertCircle } from "lucide-react"
 import { useTaskSlice } from "@/hooks/useTaskSlice"
+import { Board } from "@/hooks/interfaces/UseBoards.interface"
+import queryClient from "@/lib/queryClient"
+import { useSearchParams } from "react-router"
 
 const getPriority = (priority: TaskPriority) => {
   switch (priority) {
@@ -28,8 +31,8 @@ const getPriority = (priority: TaskPriority) => {
 }
 
 const checkDate = (date: string) => {
-  const parsedDate = new Date(date);
   const now = new Date();
+  const parsedDate = new Date(date);
   return parsedDate <= now;
 }
 
@@ -37,18 +40,40 @@ const formSchema = z.object({
   title: z.string().min(1, { message: "El título es requerido" }).max(100, { message: "El título debe tener menos de 100 caracteres" }),
   finishDate: z.string().min(1, { message: "La fecha de finalización es requerida" }),
   priority: z.nativeEnum(TaskPriority),
+  board: z.string({
+    required_error: "El tablero es requerido",
+  }),
 })
-
 
 export const TaskFormGeneralInfo = () => {
   const { setDataTask, data: taskData } = useTaskSlice();
 
+  const [searchParams] = useSearchParams();
+
+  const board = useMemo(() => {
+    return searchParams.get("board");
+  }, [searchParams]);
+
+  const boards = useMemo(() => {
+    return queryClient.getQueryData<Board[]>(["boards"]);
+  }, []);
+  
+  
+  const checkForExistingBoard = useCallback((board: string) => {
+    if (boards) {
+      console.log(boards.find((b) => b.slug === board)?.slug, board);
+      return boards.find((b) => b.slug === board)?.slug;
+    }
+    return undefined;
+  }, [boards]);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: taskData?.title || '',
-      finishDate: taskData?.finishDate || '',
+      finishDate: taskData?.finishDate,
       priority: taskData?.priority || TaskPriority.LOW,
+      board: checkForExistingBoard(taskData?.board || board || ''),
     },
   });
 
@@ -127,6 +152,35 @@ export const TaskFormGeneralInfo = () => {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="board"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tablero</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecciona el tablero" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {boards?.map((board) => (
+                      <SelectItem key={board.slug} value={board.slug}>
+                        {board.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button className="bg-violet-700 text-white hover:bg-violet-600 text-xl font-bold py-7 w-67.5 mx-auto mt-auto">Siguiente</Button>
       </form>
     </Form>

@@ -42,7 +42,7 @@ const initialState: TaskState = {
   data: {
     type: TaskType.DIGITAL,
     title: '',
-    finishDate: new Date().toISOString(),
+    finishDate: '',
     priority: TaskPriority.NORMAL,
     description: '',
     referenceFiles: [],
@@ -71,7 +71,8 @@ export const taskSlice = createSlice({
     },
 
     onClearDataTask: (state) => {
-      Object.assign(state, initialState);
+      state.data = initialState.data;
+      state.currentStep = initialState.currentStep;
     },
   },
 });

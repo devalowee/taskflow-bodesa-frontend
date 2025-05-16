@@ -1,4 +1,6 @@
-import { RequestPriority, RequestStatus } from "../components/boards/interfaces/board.interfaces";
+import { format } from "date-fns";
+import { RequestStatus } from "../components/boards/interfaces/board.interfaces";
+import { TaskPriority, TaskType } from "@/store/tasks/taskSlice";
 
 export const sanitizedSlug = (slug: string) => {
   return slug.replace(/-/g, ' ').charAt(0).toUpperCase() + slug.replace(/-/g, ' ').slice(1);
@@ -10,7 +12,7 @@ export const getInitials = (name: string | undefined) => {
   return (parts[0]?.[0] || '') + (parts[1]?.[0] || '').toUpperCase();
 }
 
-export const getPriority = (priority: RequestPriority) => {
+export const getPriority = (priority: TaskPriority) => {
   switch (priority) {
     case 'LOW':
       return 'Baja';
@@ -45,6 +47,21 @@ export const resumeTo60Chars = (text: string) => {
     return `${ text.slice(0, 60).trim() }...`;
   }
   return text;
+}
+
+export const getTaskType = (type: TaskType) => {
+  switch (type) {
+    case 'DIGITAL':
+      return 'Digital';
+    case 'PRINTED':
+      return 'Impresa';
+    case 'ECOMMERCE':
+      return 'Ecommerce';
+    case 'SPECIAL':
+      return 'Especial';
+    default:
+      return 'Digital';
+  }
 }
 
 export enum Roles {
@@ -110,4 +127,8 @@ export const fileSize = 50 * 1024 * 1024; // 50MB
 
 export const getFileExtension = (fileName: string) => {
   return '.' + fileName.split('.').pop()?.toLowerCase();
+}
+
+export const getFormatDate = (date: string | Date) => {
+  return format(new Date(date), 'dd/MM/yyyy HH:mm');
 }

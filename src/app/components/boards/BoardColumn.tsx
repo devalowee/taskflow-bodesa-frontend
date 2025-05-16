@@ -1,11 +1,11 @@
 import { RequestBasicCard } from "./RequestBasicCard";
 import { RequestStatus } from "./interfaces/board.interfaces";
 import { useDroppable } from "@dnd-kit/core";
-import { CreateRequest } from "./CreateRequest";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SanitizedRequestCardProps } from "@/app/components/assignments/AssignmentColumn";
+import { Button } from "@/components/ui/button";
 interface BoardColumnProps {
   title: string;
   requests: SanitizedRequestCardProps[];
@@ -34,7 +34,9 @@ export const BoardColumn = ({ title, status, requests, color, allowButton = fals
           <div className={cn("w-1 h-4 rounded-full", color)}></div>
           <h1 className="text-sm font-bold text-stone-500">{title}</h1>
         </div>
-        {allowButton && <CreateRequest status={status} boardSlug={slug} />}
+        {allowButton && <Link to={`/tareas/crear?board=${slug}`}>
+          <Button>Crear</Button>
+        </Link>}
       </div>
       <div
         ref={setNodeRef}

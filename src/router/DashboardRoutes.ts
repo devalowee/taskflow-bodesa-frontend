@@ -16,6 +16,7 @@ import { SingleRequest } from "@/app/pages/requests/SingleRequest";
 import { Formats } from "@/app/pages/Formats";
 import { Categories } from "@/app/pages/formats/Categories";
 import { CreateTask } from "@/app/pages/tasks/CreateTask";
+import { TaskDone } from "@/app/pages/tasks/TaskDone";
 
 const createProtectedRoute = (allowedRoles: string[]) => {
   return () => React.createElement(ProtectedRoute, { allowedRoles });
@@ -67,6 +68,10 @@ export const DashboardRoutes = [
           {
             path: "crear",
             Component: CreateTask,
+          },
+          {
+            path: "creada",
+            Component: TaskDone,
           },
           {
             path: ":id",
