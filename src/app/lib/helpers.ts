@@ -30,15 +30,15 @@ export const getPriority = (priority: TaskPriority) => {
 export const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'Baja':
-      return 'bg-sky-200';
+      return 'text-sky-500 fill-sky-500';
     case 'Normal':
-      return 'bg-violet-400';
+      return 'text-violet-500 fill-violet-500';
     case 'Alta':
-      return 'bg-amber-400';
+      return 'text-amber-500 fill-amber-500';
     case 'Urgente':
-      return 'bg-red-400';
+      return 'text-red-500 fill-red-500';
     default:
-      return 'bg-gray-400';
+      return 'text-gray-500 fill-gray-500';
   }
 }
 

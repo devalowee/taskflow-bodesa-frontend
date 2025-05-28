@@ -55,9 +55,9 @@ export const UserColumn = ({ id, name, avatar, requests }: UserColumnProps) => {
         <div className="flex p-4 text-xs justify-between">
           <div className="flex flex-col gap-2 w-6/10">
             <span className="font-semibold text-sm">Carga de trabajo</span>
-            <span className="text-xs">En espera ({requests.pending})</span>
+            <span className="text-xs">En espera ({requests.awaiting})</span>
             <span className="text-xs">Diseñando ({requests.inProgress})</span>
-            <span className="text-xs">En Revisión ({requests.attention})</span>
+            <span className="text-xs">En Revisión ({requests.pending})</span>
           </div>
           <div className="flex flex-col gap-2 w-2/5" ref={setNodeRef}>
             <div className="border border-dashed size-full rounded-md border-black bg-neutral-300 flex flex-col items-center justify-center">

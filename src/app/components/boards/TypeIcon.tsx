@@ -1,4 +1,4 @@
-import { Monitor, Printer, ShoppingCart, Sparkles } from "lucide-react";
+import { MonitorSmartphone, Printer, ShoppingCart, Sparkles } from "lucide-react";
 import { TooltipComponent } from "../TooltipComponent";
 import { RequestType } from "./interfaces/board.interfaces";
 
@@ -13,7 +13,7 @@ export const TypeIcon = ({ type }: { type: RequestType }) => {
     type === "PRINTED"
       ? { icon: <Printer className="size-5 bg-[#F3F3F3] p-0.5 rounded" />, text: "Impreso" }
       : type === "DIGITAL"
-      ? { icon: <Monitor className="size-5 bg-[#F3F3F3] p-0.5 rounded" />, text: "Digital" }
+      ? { icon: <MonitorSmartphone className="size-5 bg-[#F3F3F3] p-0.5 rounded" />, text: "Digital" }
       : type === "ECOMMERCE"
       ? { icon: <ShoppingCart className="size-5 bg-[#F3F3F3] p-0.5 rounded" />, text: "Ecommerce" }
       : { icon: <Sparkles className="size-5 bg-[#F3F3F3] p-0.5 rounded" />, text: "Especial" };

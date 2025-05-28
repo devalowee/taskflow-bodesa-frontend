@@ -108,7 +108,7 @@ export const AutoAssignments: React.FC = () => {
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex gap-4 h-full">
           <AssignmentColumn
-            title="EN ESPERA"
+            title="Espera"
             requests={awaiting}
             status={RequestStatus.AWAITING}
             color="bg-gray-400"
@@ -116,28 +116,28 @@ export const AutoAssignments: React.FC = () => {
             isLoading={isLoading}
           />
           <AssignmentColumn
-            title="REQUIERE ATENCIÓN"
+            title="Atención"
             requests={attention}
             status={RequestStatus.ATTENTION}
             color="bg-yellow-400"
             isLoading={isLoading}
           />
           <AssignmentColumn
-            title="EN PROGRESO"
+            title="Diseñando"
             requests={inProgress}
             status={RequestStatus.IN_PROGRESS}
             color="bg-sky-500"
             isLoading={isLoading}
           />
           <AssignmentColumn
-            title="POR AUTORIZAR"
+            title="Revisión"
             requests={pending}
             status={RequestStatus.PENDING}
             color="bg-purple-600"
             isLoading={isLoading}
           />
           <AssignmentColumn
-            title="TERMINADAS"
+            title="Finalizado"
             requests={done}
             status={RequestStatus.DONE}
             color="bg-green-500"

@@ -92,7 +92,7 @@ export interface Designer {
   avatar: string
   requests: {
     pending: number
-    attention: number
+    awaiting: number
     inProgress: number
     total: number
   }

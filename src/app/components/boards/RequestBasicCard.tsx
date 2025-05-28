@@ -6,19 +6,16 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { useDraggable } from "@dnd-kit/core";
-import { RequestStatus } from "./interfaces/board.interfaces";
 import {
+  CalendarCheck,
   CalendarPlus,
+  Flag,
   ListEnd,
-  MessageSquare,
-  Repeat2,
-  Rocket,
   SquareArrowOutUpRight,
   UserRoundX,
 } from "lucide-react";
 import { getPriorityColor } from "@/app/lib/helpers";
 import { cn } from "@/lib/utils";
-import { PriorityIcon } from "./PriorityIcon";
 import { TooltipComponent } from "../TooltipComponent";
 import { TypeIcon } from "./TypeIcon";
 import { NavLink } from "react-router";
@@ -29,7 +26,6 @@ export const RequestBasicCard = ({
   title,
   description,
   type,
-  status,
   author,
   priority,
   assignedTo,
@@ -38,30 +34,20 @@ export const RequestBasicCard = ({
   finishDate,
 }: SanitizedRequestCardProps) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
-  
-  const CardColor = cn(
-    "border-2 border-transparent",
-    {
-      "bg-yellow-50 border-yellow-500": status === RequestStatus.ATTENTION,
-      "border-sky-500": status === RequestStatus.IN_PROGRESS,
-      "bg-purple-50 border-purple-500": status === RequestStatus.PENDING,
-      "opacity-50": status === RequestStatus.DONE,
-    }
-  )
 
   return (
     <div
       ref={setNodeRef}
       className={`${
         transform ? "opacity-50" : "opacity-100 cursor-grab"
-      } transition-opacity rounded-md p-0 font-roboto-condensed w-[260px]`}
+      } transition-opacity rounded-md p-0 w-[260px]`}
       {...listeners}
       {...attributes}
     >
-      <Card className={`${transform ? 'border-dashed border-2' : 'border-2'} py-0 gap-0 ${CardColor}`}>
+      <Card className={`${transform ? 'border-dashed border-violet-700' : 'border-1'} py-0 gap-0`}>
         <CardHeader className="border-b !pb-0 px-3 h-9.5 flex items-center gap-2">
           <TooltipComponent text={board.name}>
-            <p className="text-[9px] text-white p-1 px-1.5 font-bold rounded" style={{ backgroundColor: board.color }}>
+            <p className="text-xs text-white size-5 font-semibold rounded flex items-center justify-center" style={{ backgroundColor: board.color }}>
               {board.initials}
             </p>
           </TooltipComponent>
@@ -72,13 +58,11 @@ export const RequestBasicCard = ({
             <CalendarPlus className="size-5 bg-[#F3F3F3] p-0.5 rounded" />
           </TooltipComponent>
           <TypeIcon type={type} />
-          <span
-            className={cn(
-              "flex items-center gap-1 p-1 rounded ml-auto",
+          <span className="flex items-center gap-1 p-1 ml-auto">
+            <Flag className={cn(
+              "size-3",
               getPriorityColor(priority)
-            )}
-          >
-            <PriorityIcon priority={priority} />
+            )} />
             <p className="text-xs">{priority}</p>
           </span>
           <NavLink to={`/solicitudes/${id}`} onPointerDown={(e) => e.stopPropagation()}>
@@ -87,8 +71,8 @@ export const RequestBasicCard = ({
         </CardHeader>
         <CardContent className="px-4 !py-0 min-h-18.5 flex items-center">
           <CardDescription className="text-slate-700">
-            <p className="text-sm font-bold">{title}</p>
-            <p className="text-[13px]">{description}</p>
+            <p className="text-xs font-semibold">{title}</p>
+            <p className="text-xs">{description}</p>
           </CardDescription>
         </CardContent>
         <CardFooter className="px-3 !py-0 h-9.5 border-t flex items-center gap-1">
@@ -105,21 +89,13 @@ export const RequestBasicCard = ({
               </span>
             )}
           </TooltipComponent>
-          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
-            <ListEnd className="size-3" />
-            <p className="text-[10px]">10</p>
+          <span className="flex items-center justify-center bg-[#F3F3F3] p-0.5 rounded">
+            <ListEnd className="size-4" strokeWidth={1.75} />
+            <p className="text-xs">10</p>
           </span>
-          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
-            <MessageSquare className="size-3" />
-            <p className="text-[10px]">10</p>
-          </span>
-          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-4.5 min-w-9 rounded">
-            <Repeat2 className="size-3" />
-            <p className="text-[10px]">10</p>
-          </span>
-          <span className="flex items-center justify-center gap-0.5 bg-[#F3F3F3] h-5 w-full rounded text-green-600">
-            <Rocket className="size-3" />
-            <p className="text-[10px]">{finishDate}</p>
+          <span className="flex items-center justify-center gap-0.5 ml-auto">
+            <CalendarCheck className="size-4" strokeWidth={1.75} />
+            <p className="text-xs">{finishDate}</p>
           </span>
         </CardFooter>
       </Card>
